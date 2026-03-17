@@ -9,35 +9,60 @@
 
     <div style="width: 80%; margin: auto;">
 
-        <table border="1" width="100%" style="background: white; border-collapse: collapse;">
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Class</th>
-            </tr>
-            <tr>
-                <td>1</td>
-                <td>Abiola Ridwan</td>
-                <td>JSS 1</td>
-            </tr>
-            <tr>
-                <td>2</td>
-                <td>Olamilekan Ade</td>
-                <td>JSS 2</td>
-            </tr>
-        </table>
+        <h1 style="text-align: center;">Students</h1>
 
-        <br>
-        <button style="padding: 10px 20px; background: green; color: white; border: none; border-radius: 5px;">
-            Add New Student
-        </button>
+<div style="width: 80%; margin: auto;">
 
-    </div>
+    <table id="studentTable" border="1" width="100%" style="background: white; border-collapse: collapse;">
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Class</th>
+        </tr>
+        <tr>
+            <td>1</td>
+            <td>Abiola Ridwan</td>
+            <td>JSS 1</td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Olamilekan Ade</td>
+            <td>JSS 2</td>
+        </tr>
+    </table>
 
     <br>
-    <div style="text-align: center;">
-        <a href="dashboard.html">Back to Dashboard</a>
-    </div>
+    <input type="text" id="newStudentName" placeholder="Student Name" style="padding:5px;">
+    <input type="text" id="newStudentClass" placeholder="Class" style="padding:5px;">
+    <button onclick="addStudent()" style="padding: 5px 10px; background: green; color: white; border: none; border-radius: 5px;">
+        Add Student
+    </button>
 
-</body>
-</html>
+</div>
+
+<script>
+function addStudent() {
+    var table = document.getElementById("studentTable");
+    var name = document.getElementById("newStudentName").value;
+    var cls = document.getElementById("newStudentClass").value;
+
+    if(name === "" || cls === "") {
+        alert("Please fill both fields");
+        return;
+    }
+
+    var rowCount = table.rows.length;
+    var row = table.insertRow(rowCount);
+    var cell1 = row.insertCell(0);
+    var cell2 = row.insertCell(1);
+    var cell3 = row.insertCell(2);
+
+    cell1.innerHTML = rowCount;
+    cell2.innerHTML = name;
+    cell3.innerHTML = cls;
+
+    // Clear input fields
+    document.getElementById("newStudentName").value = "";
+    document.getElementById("newStudentClass").value = "";
+}
+       </script>

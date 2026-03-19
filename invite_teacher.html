@@ -6,7 +6,7 @@
     <style>
         body { font-family: Arial; text-align:center; padding:50px; background:#f4f4f4; }
         input { padding:10px; margin:10px; width:250px; font-size:16px; }
-        button { padding:10px 25px; font-size:16px; cursor:pointer; }
+        button { padding:10px 25px; font-size:16px; cursor:pointer; margin-top:10px; }
         textarea { width:80%; height:60px; margin-top:20px; }
     </style>
 </head>
@@ -24,24 +24,32 @@
 </div>
 
 <script>
+// Only admin can access this page
 let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!loggedIn || loggedIn.role !== "admin"){ alert("Access denied!"); window.location.href="login.html"; }
+if(!loggedIn || loggedIn.role !== "admin"){
+    alert("Access denied! Admin only");
+    window.location.href="login.html";
+}
 
 function inviteTeacher(){
     const name = document.getElementById("teacherName").value.trim();
     const email = document.getElementById("teacherEmail").value.trim();
-    if(!name || !email){ alert("Please fill all fields"); return; }
 
-    // Generate a unique code for teacher
-    let code = Math.random().toString(36).substring(2,10);
+    if(!name || !email){
+        alert("Please fill in all fields");
+        return;
+    }
+
+    // Generate unique code for teacher invite
+    const code = Math.random().toString(36).substring(2,10);
 
     // Save invite in localStorage
     let invites = JSON.parse(localStorage.getItem("teacherInvites")) || [];
     invites.push({name, email, code});
     localStorage.setItem("teacherInvites", JSON.stringify(invites));
 
-    // Generate a "link" (simulate email)
-    let link = `${window.location.origin}/register_teacher.html?code=${code}`;
+    // Generate a "link" (simulate email link)
+    const link = `${window.location.origin}/register_teacher.html?code=${code}`;
     document.getElementById("inviteLink").value = `Share this link with the teacher:\n${link}`;
 
     alert("Invite link generated! Share it with the teacher.");

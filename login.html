@@ -3,23 +3,53 @@
 <head>
     <title>ADUE Portal Login</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align:center; padding-top:50px; background:#f4f4f4; }
-        input { padding:10px; margin:10px; width:200px; }
-        button { padding:10px 20px; }
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding-top: 50px;
+            background: #f4f4f4;
+        }
+        input {
+            padding: 10px;
+            margin: 10px;
+            width: 250px;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 25px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        h1 {
+            color: #333;
+        }
     </style>
 </head>
 <body>
 
-<h1>Login</h1>
+<h1>Login to ADUE Portal</h1>
 
 <input type="email" id="email" placeholder="Email"><br>
 <input type="password" id="password" placeholder="Password"><br>
 <button onclick="login()">Login</button>
 
 <script>
-// Clear previous session
-localStorage.removeItem("loggedInUser");
+// Ensure admin account exists (force-create for first-time)
+let users = JSON.parse(localStorage.getItem("users")) || [];
 
+// Check if admin exists
+if(!users.find(u => u.role === "admin")){
+    users.push({
+        name: "Admin User",
+        email: "dexterousfm@gmail.com", // Your admin email
+        password: "Ayomide@123",        // Your admin password
+        role: "admin"
+    });
+    localStorage.setItem("users", JSON.stringify(users));
+    console.log("Admin account created: dexterousfm@gmail.com / Ayomide@123");
+}
+
+// Login function
 function login() {
     const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
@@ -30,17 +60,15 @@ function login() {
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    // Check for matching user
     const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
 
     if(user){
         // Save session
         localStorage.setItem("loggedInUser", JSON.stringify(user));
-        alert(`Welcome ${user.name}!`);
+        alert(`Welcome, ${user.name}!`);
         window.location.href = "dashboard.html";
     } else {
-        alert("Invalid email or password. Please check your credentials.");
+        alert("Invalid email or password");
     }
 }
 </script>

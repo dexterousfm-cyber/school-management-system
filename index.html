@@ -10,73 +10,42 @@
             padding: 20px;
             border: 1px solid #ccc;
             border-radius: 10px;
+            text-align: center;
         }
-        input {
-            width: 100%;
-            padding: 8px;
-            margin: 5px 0 15px 0;
-            box-sizing: border-box;
-        }
-        button {
-            width: 100%;
-            padding: 10px;
-            background-color: #4CAF50;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
+        input { width: 90%; padding: 8px; margin: 10px 0; }
+        button { width: 95%; padding: 10px; background-color: #4CAF50; color: white; border: none; cursor: pointer; }
         button:hover { background-color: #45a049; }
-        .register-link {
-            margin-top: 10px;
-            text-align: center;
-        }
-        .register-link a {
-            color: green;
-            font-weight: bold;
-            text-decoration: none;
-        }
-        .register-link a:hover {
-            text-decoration: underline;
-        }
-        #status {
-            color: red;
-            text-align: center;
-            margin-bottom: 10px;
-        }
+        .teacher-register { margin-top: 20px; display: block; font-weight: bold; color: green; text-decoration: none; }
     </style>
 </head>
 <body>
 
-<h1 style="text-align:center;">ADUE Portal Login</h1>
+<h2>ADUE Portal Login</h2>
 
-<input type="email" id="loginEmail" placeholder="Email">
-<input type="password" id="loginPassword" placeholder="Password">
+<input type="email" id="loginEmail" placeholder="Email"><br>
+<input type="password" id="loginPassword" placeholder="Password"><br>
 <button onclick="login()">Login</button>
 
-<p id="status"></p>
+<p id="status" style="color:red;"></p>
 
-<p style="text-align:center;">Don't have an account? Contact Admin to create one.</p>
+<p>Don't have an account? Contact Admin.</p>
 
-<!-- Teacher registration button -->
-<div class="register-link">
-    Are you a teacher? <a href="register_teacher.html">Register here</a>
-</div>
+<!-- Teacher registration link -->
+<a class="teacher-register" href="register_teacher.html">Register as Teacher</a>
 
 <script>
 // Get users from localStorage
 let users = JSON.parse(localStorage.getItem("users")) || [];
 
-// Login function
 function login(){
     let email = document.getElementById("loginEmail").value.trim();
     let password = document.getElementById("loginPassword").value.trim();
 
     if(!email || !password){
-        alert("Please fill all fields");
+        alert("Fill all fields");
         return;
     }
 
-    // Find user
     let user = users.find(u => u.email === email && u.password === password);
 
     if(!user){
@@ -84,10 +53,8 @@ function login(){
         return;
     }
 
-    // Save logged-in user
     localStorage.setItem("loggedInUser", JSON.stringify(user));
 
-    // Redirect based on role
     if(user.role === "admin"){
         window.location.href = "admin_dashboard.html";
     } else if(user.role === "teacher"){

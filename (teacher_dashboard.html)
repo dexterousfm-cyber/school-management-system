@@ -1,0 +1,69 @@
+<h1>Teacher Dashboard</h1>
+<button onclick="logout()">Logout</button>
+
+<h3>My Students</h3>
+<table id="studentTable">
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Email</th>
+      <th>Subject</th>
+      <th>Result</th>
+      <th>Action</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+</table>
+<p id="status"></p>
+
+<script>
+let users = JSON.parse(localStorage.getItem("users")) || [];
+let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+
+if(!loggedIn || loggedIn.role !== "teacher"){
+  alert("Access denied!");
+  window.location.href = "index.html";
+}
+
+function logout(){
+  localStorage.removeItem("loggedInUser");
+  window.location.href = "index.html";
+}
+
+// Show students assigned to this teacher
+function renderStudents(){
+  let tbody = document.getElementById("studentTable").getElementsByTagName("tbody")[0];
+  tbody.innerHTML = "";
+  let students = users.filter(u => u.role === "student" && u.teacherEmail === loggedIn.email);
+
+  if(students.length === 0){
+    tbody.innerHTML = "<tr><td colspan='5'>No students assigned yet</td></tr>";
+    return;
+  }
+
+  students.forEach((s, idx) => {
+    let row = tbody.insertRow();
+    row.insertCell(0).innerText = s.name;
+    row.insertCell(1).innerText = s.email;
+    row.insertCell(2).innerText = s.subject;
+    row.insertCell(3).innerHTML = s.result ? s.result : `<input type='text' id='result_${idx}' placeholder='Enter result'>`;
+    row.insertCell(4).innerHTML = `<button onclick="saveResult(${idx})">Save</button>`;
+  });
+}
+
+// Save student result
+function saveResult(idx){
+  let students = users.filter(u => u.role === "student" && u.teacherEmail === loggedIn.email);
+  let value = document.getElementById(`result_${idx}`).value.trim();
+  if(!value){ alert("Enter a result"); return; }
+
+  let student = students[idx];
+  student.result = value;
+  users = users.map(u => u.email === student.email ? student : u);
+  localStorage.setItem("users", JSON.stringify(users));
+  document.getElementById("status").innerText = `Result saved for ${student.name}`;
+  renderStudents();
+}
+
+renderStudents();
+</script>

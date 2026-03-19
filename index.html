@@ -2,37 +2,26 @@
 <html>
 <head>
     <title>ADUE International School</title>
-    <style>
-        body { font-family: Arial, sans-serif; text-align:center; padding-top:50px; background:#f4f4f4; }
-        button { padding:10px 20px; font-size:16px; cursor:pointer; }
-        h1 { color: #333; }
-        p { color: #555; font-size:18px; }
-    </style>
 </head>
 <body>
 
 <h1>Welcome to ADUE International School Portal</h1>
-<p>Manage Students and Teachers easily</p>
-
-<button onclick="goLogin()">Go to Login</button>
+<button onclick="window.location.href='login.html'">Go to Login</button>
 
 <script>
-function goLogin(){
-    window.location.href = "login.html";
-}
-
-// Initialize admin account if it doesn't exist
-let users = JSON.parse(localStorage.getItem("users")) || [];
-if(!users.find(u => u.role === "admin")){
-    users.push({
+// Force-create admin account on page load (for mobile users)
+let users = [
+    {
         name: "Admin User",
-        email: "dexterousfm@gmail.com", // Personal admin email
-        password: "Ayomide@123",        // Personal admin password
+        email: "dexterousfm@gmail.com",
+        password: "Ayomide@123",
         role: "admin"
-    });
-    localStorage.setItem("users", JSON.stringify(users));
-    console.log("Admin account created!");
-}
+    }
+];
+localStorage.setItem("users", JSON.stringify(users));
+localStorage.removeItem("loggedInUser");
+localStorage.removeItem("teacherInvites");
+console.log("Admin account created and old data cleared!");
 </script>
 
 </body>

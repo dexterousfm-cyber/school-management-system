@@ -14,19 +14,15 @@
 <input type="password" id="studentPassword" placeholder="Student Password"><br><br>
 
 <select id="studentClass">
-    <option>JSS1</option>
-    <option>JSS2</option>
-    <option>JSS3</option>
-    <option>SS1</option>
-    <option>SS2</option>
-    <option>SS3</option>
+    <option>Year 7</option>
+    <option>Year 8</option>
+    <option>Year 9</option>
+    <option>Year 10</option>
+    <option>Year 11</option>
+    <option>Year 12</option>
 </select><br><br>
 
-<input type="text" id="studentSubject" placeholder="Subject"><br><br>
-
 <button onclick="addStudent()">Add Student</button>
-
-<p id="status"></p>
 
 <hr>
 
@@ -37,13 +33,12 @@
 let users = JSON.parse(localStorage.getItem("users")) || [];
 let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
 
-// Add student
+// ADD STUDENT
 function addStudent(){
     let name = document.getElementById("studentName").value;
     let email = document.getElementById("studentEmail").value;
     let password = document.getElementById("studentPassword").value;
     let studentClass = document.getElementById("studentClass").value;
-    let subject = document.getElementById("studentSubject").value;
 
     users.push({
         name,
@@ -51,45 +46,112 @@ function addStudent(){
         password,
         role: "student",
         class: studentClass,
-        subject: subject,
-        teacherEmail: loggedIn.email
+        teacherEmail: loggedIn.email,
+        results: {}  // store results per term
     });
 
     localStorage.setItem("users", JSON.stringify(users));
-
-    document.getElementById("status").innerText = "Student added!";
     renderStudents();
 }
 
-// Show students
+// GRADE FUNCTION
+function getGrade(score){
+    score = Number(score);
+    if(score >= 70) return "A";
+    if(score >= 60) return "B";
+    if(score >= 50) return "C";
+    if(score >= 45) return "D";
+    if(score >= 40) return "E";
+    return "F";
+}
+
+// SHOW STUDENTS
 function renderStudents(){
     let div = document.getElementById("students");
     div.innerHTML = "";
 
-    let myStudents = users.filter(u => u.role === "student" && u.teacherEmail === loggedIn.email);
+    let myStudents = users.filter(u => u.role==="student" && u.teacherEmail===loggedIn.email);
 
-    myStudents.forEach((s, i) => {
+    myStudents.forEach((s,i)=>{
         div.innerHTML += `
-        <p>
-        ${s.name} - ${s.class} - ${s.subject}
-        <input type="text" id="result_${i}" placeholder="Result">
-        <button onclick="saveResult(${i})">Save</button>
-        </p>`;
+        <div style="border:1px solid #ccc; padding:10px; margin:10px;">
+            <b>${s.name}</b> (${s.class})<br><br>
+
+            <select id="term_${i}">
+                <option>First Term</option>
+                <option>Second Term</option>
+                <option>Third Term</option>
+            </select><br><br>
+
+            <input type="text" id="subject_${i}" placeholder="Subject">
+            <input type="number" id="score_${i}" placeholder="Score">
+
+            <button onclick="saveResult(${i})">Add Result</button>
+
+            <p>${showResults(s)}</p>
+        </div>
+        `;
     });
 }
 
-// Save result
+// SAVE RESULT
 function saveResult(i){
-    let myStudents = users.filter(u => u.role === "student" && u.teacherEmail === loggedIn.email);
-    let value = document.getElementById("result_"+i).value;
+    let myStudents = users.filter(u => u.role==="student" && u.teacherEmail===loggedIn.email);
+
+    let subject = document.getElementById("subject_"+i).value;
+    let score = document.getElementById("score_"+i).value;
+    let term = document.getElementById("term_"+i).value;
+
+    if(!subject || !score){
+        alert("Fill everything");
+        return;
+    }
 
     let student = myStudents[i];
-    student.result = value;
+
+    if(!student.results[term]){
+        student.results[term] = {};
+    }
+
+    student.results[term][subject] = score;
 
     users = users.map(u => u.email === student.email ? student : u);
     localStorage.setItem("users", JSON.stringify(users));
 
     renderStudents();
+}
+
+// DISPLAY RESULTS
+function showResults(student){
+    if(!student.results) return "No results";
+
+    let text = "";
+
+    for(let term in student.results){
+        text += "<b>" + term + "</b><br>";
+
+        let total = 0;
+        let count = 0;
+
+        for(let sub in student.results[term]){
+            let score = student.results[term][sub];
+            let grade = getGrade(score);
+
+            total += Number(score);
+            count++;
+
+            text += sub + ": " + score + " (" + grade + ")<br>";
+        }
+
+        if(count > 0){
+            let avg = (total / count).toFixed(2);
+            text += "Average: " + avg + "<br>";
+        }
+
+        text += "<br>";
+    }
+
+    return text || "No results yet";
 }
 
 renderStudents();

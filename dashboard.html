@@ -1,94 +1,72 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Dashboard - ADUE International School Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; text-align:center; background:#f4f4f4; padding:20px; }
-        .nav a { margin:0 15px; text-decoration:none; font-weight:bold; color:#333; }
-        .card { display:inline-block; background:#fff; padding:20px; margin:20px; border-radius:10px; vertical-align:top; }
-        .info { margin-top:30px; font-size:18px; }
-        button { padding:10px 20px; font-size:16px; cursor:pointer; margin-top:10px; }
-    </style>
-</head>
-<body>
+<h1>ADUE Dashboard</h1>
+<button onclick="logout()">Logout</button>
 
-<div class="nav" id="navBar"></div>
+<!-- Add Admin -->
+<div id="adminSection" class="card">
+<h3>Add New Admin</h3>
+<input type="text" id="newAdminName" placeholder="Full Name"><br>
+<input type="email" id="newAdminEmail" placeholder="Email"><br>
+<input type="password" id="newAdminPassword" placeholder="Password"><br>
+<button onclick="addAdmin()">Add Admin</button>
+<p id="adminStatus"></p>
+</div>
 
-<h1>Dashboard</h1>
+<!-- View Teachers -->
+<div id="teacherSection" class="card">
+<h3>All Teachers</h3>
+<div id="teacherList"></div>
+</div>
 
-<div id="dashboardContent"></div>
+<!-- View Students -->
+<div id="studentSection" class="card">
+<h3>All Students</h3>
+<div id="studentList"></div>
+</div>
 
 <script>
-// Get logged-in user
-let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!loggedIn){ window.location.href="login.html"; }
-
 let users = JSON.parse(localStorage.getItem("users")) || [];
-let dashboardDiv = document.getElementById("dashboardContent");
-let navBar = document.getElementById("navBar");
+let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
 
-// Logout function
-function logout(){
-    localStorage.removeItem("loggedInUser");
-    window.location.href="index.html";
+if(!loggedIn || loggedIn.role !== "admin"){ alert("Access denied!"); window.location.href="login.html"; }
+
+function logout(){ localStorage.removeItem("loggedInUser"); window.location.href="index.html"; }
+
+// Add Admin
+function addAdmin(){
+    let name = document.getElementById("newAdminName").value.trim();
+    let email = document.getElementById("newAdminEmail").value.trim();
+    let password = document.getElementById("newAdminPassword").value.trim();
+    if(!name || !email || !password){ alert("All fields required!"); return; }
+    if(users.some(u => u.email===email)){ document.getElementById("adminStatus").innerText="Admin exists!"; return; }
+    users.push({name,email,password,role:"admin"});
+    localStorage.setItem("users",JSON.stringify(users));
+    document.getElementById("adminStatus").innerText="Admin added!";
+    renderTeachers(); renderStudents();
 }
 
-// Build dashboard based on role
-if(loggedIn.role === "admin"){
-    navBar.innerHTML = `
-        <a href="dashboard.html">Dashboard</a>
-        <a href="students.html">Students</a>
-        <a href="teachers.html">Teachers</a>
-        <a href="#" onclick="logout()">Logout</a>
-    `;
-
-    // Count users dynamically
-    let totalStudents = users.filter(u => u.role === "student").length;
-    let totalTeachers = users.filter(u => u.role === "teacher").length;
-    let totalAdmins = users.filter(u => u.role === "admin").length;
-
-    dashboardDiv.innerHTML = `
-        <div class="card">
-            <h2>Total Students</h2>
-            <p>${totalStudents}</p>
-            <button onclick="window.location.href='register_student.html'">Register Student</button>
-        </div>
-        <div class="card">
-            <h2>Total Teachers</h2>
-            <p>${totalTeachers}</p>
-            <button onclick="window.location.href='invite_teacher.html'">Invite Teacher</button>
-        </div>
-        <div class="card">
-            <h2>Total Admins</h2>
-            <p>${totalAdmins}</p>
-            <button onclick="window.location.href='invite_admin.html'">Invite Admin</button>
-        </div>
-    `;
-} else if(loggedIn.role === "teacher"){
-    navBar.innerHTML = `
-        <a href="dashboard.html">Dashboard</a>
-        <a href="#" onclick="logout()">Logout</a>
-    `;
-    dashboardDiv.innerHTML = `
-        <div class="info">
-            <p>Welcome Teacher: <strong>${loggedIn.name}</strong></p>
-            <p>Email: ${loggedIn.email}</p>
-        </div>
-    `;
-} else if(loggedIn.role === "student"){
-    navBar.innerHTML = `
-        <a href="dashboard.html">Dashboard</a>
-        <a href="#" onclick="logout()">Logout</a>
-    `;
-    dashboardDiv.innerHTML = `
-        <div class="info">
-            <p>Welcome Student: <strong>${loggedIn.name}</strong></p>
-            <p>Email: ${loggedIn.email}</p>
-        </div>
-    `;
+// Show teachers
+function renderTeachers(){
+    let container = document.getElementById("teacherList");
+    container.innerHTML = "";
+    let teachers = users.filter(u=>u.role==="teacher");
+    if(teachers.length===0){ container.innerHTML="<p>No teachers yet</p>"; return; }
+    teachers.forEach(t=>{
+        container.innerHTML+=`<p>${t.name} (${t.email}) - Subject: ${t.subject}</p>`;
+    });
 }
+
+// Show students
+function renderStudents(){
+    let container = document.getElementById("studentList");
+    container.innerHTML = "";
+    let students = users.filter(u=>u.role==="student");
+    if(students.length===0){ container.innerHTML="<p>No students yet</p>"; return; }
+    students.forEach(s=>{
+        let teacher = users.find(t=>t.email===s.teacherEmail);
+        container.innerHTML+=`<p>${s.name} (${s.email}) - Subject: ${s.subject} - Teacher: ${teacher?teacher.name:"N/A"}</p>`;
+    });
+}
+
+renderTeachers();
+renderStudents();
 </script>
-
-</body>
-</html>

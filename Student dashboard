@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Dashboard</title>
+</head>
+<body>
+
+<h1>My Result</h1>
+
+<div id="result"></div>
+
+<script>
+let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+
+if(!loggedIn || loggedIn.role !== "student"){
+    alert("Access denied");
+    window.location.href = "index.html";
+}
+
+document.getElementById("result").innerHTML = `
+<p>Name: ${loggedIn.name}</p>
+<p>Class: ${loggedIn.class}</p>
+<p>Subject: ${loggedIn.subject}</p>
+<p>Result: ${loggedIn.result ? loggedIn.result : "Not yet uploaded"}</p>
+`;
+</script>
+
+</body>
+</html>

@@ -1,12 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Dashboard - ADUE Portal</title>
+    <title>Dashboard - ADUE International School Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: Arial; text-align:center; background:#f4f4f4; padding:20px; }
         .nav a { margin:0 15px; text-decoration:none; font-weight:bold; color:#333; }
-        .card { display:inline-block; background:#fff; padding:20px; margin:20px; border-radius:10px; }
+        .card { display:inline-block; background:#fff; padding:20px; margin:20px; border-radius:10px; vertical-align:top; }
         .info { margin-top:30px; font-size:18px; }
         button { padding:10px 20px; font-size:16px; cursor:pointer; margin-top:10px; }
     </style>
@@ -22,7 +22,7 @@
 <div id="dashboardContent"></div>
 
 <script>
-// Check login
+// Get logged-in user
 let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!loggedIn){ window.location.href="login.html"; }
 
@@ -30,7 +30,7 @@ let users = JSON.parse(localStorage.getItem("users")) || [];
 let dashboardDiv = document.getElementById("dashboardContent");
 let navBar = document.getElementById("navBar");
 
-// Create logout function
+// Logout function
 function logout(){
     localStorage.removeItem("loggedInUser");
     window.location.href="index.html";
@@ -45,9 +45,10 @@ if(loggedIn.role === "admin"){
         <a href="#" onclick="logout()">Logout</a>
     `;
 
-    // Admin sees total students and teachers
+    // Count users
     let totalStudents = users.filter(u => u.role === "student").length;
     let totalTeachers = users.filter(u => u.role === "teacher").length;
+    let totalAdmins = users.filter(u => u.role === "admin").length;
 
     dashboardDiv.innerHTML = `
         <div class="card">
@@ -59,6 +60,11 @@ if(loggedIn.role === "admin"){
             <h2>Total Teachers</h2>
             <p>${totalTeachers}</p>
             <button onclick="window.location.href='invite_teacher.html'">Invite Teacher</button>
+        </div>
+        <div class="card">
+            <h2>Total Admins</h2>
+            <p>${totalAdmins}</p>
+            <button onclick="window.location.href='invite_admin.html'">Invite Admin</button>
         </div>
     `;
 } else if(loggedIn.role === "teacher"){

@@ -8,6 +8,7 @@
         .nav a { margin:0 15px; text-decoration:none; font-weight:bold; color:#333; }
         .card { display:inline-block; background:#fff; padding:20px; margin:20px; border-radius:10px; }
         .info { margin-top:30px; font-size:18px; }
+        button { padding:10px 20px; font-size:16px; cursor:pointer; margin-top:10px; }
     </style>
 </head>
 <body>
@@ -29,7 +30,7 @@ let users = JSON.parse(localStorage.getItem("users")) || [];
 let dashboardDiv = document.getElementById("dashboardContent");
 let navBar = document.getElementById("navBar");
 
-// Create logout link
+// Create logout function
 function logout(){
     localStorage.removeItem("loggedInUser");
     window.location.href="index.html";
@@ -57,7 +58,7 @@ if(loggedIn.role === "admin"){
         <div class="card">
             <h2>Total Teachers</h2>
             <p>${totalTeachers}</p>
-            <button onclick="alert('Teacher invites will be implemented next')">Invite Teacher</button>
+            <button onclick="window.location.href='invite_teacher.html'">Invite Teacher</button>
         </div>
     `;
 } else if(loggedIn.role === "teacher"){

@@ -1,4 +1,4 @@
-// ===== LOGIN =====
+6// ===== LOGIN =====
 const loginForm = document.getElementById("loginForm");
 
 if (loginForm) {
@@ -145,6 +145,11 @@ if (!localStorage.getItem("users")) {
             role: "admin",
             email: "admin@adue.com",
             password: "admin123"
+        },
+        {
+            role: "admin",
+            email: "phemmyallen1@gmail.com",
+            password: "Ayomide@123"
         }
     ];
     localStorage.setItem("users", JSON.stringify(users));

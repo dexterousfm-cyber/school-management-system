@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invite Admin - ADUE Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; text-align:center; padding:50px; background:#f4f4f4; }
+        input { padding:10px; margin:10px; width:250px; font-size:16px; }
+        button { padding:10px 25px; font-size:16px; cursor:pointer; margin-top:10px; }
+        p { font-weight:bold; }
+    </style>
+</head>
+<body>
+
+<h1>Invite New Admin</h1>
+
+<input type="email" id="adminEmail" placeholder="Enter new admin email"><br>
+<button onclick="generateInvite()">Generate Invite Link</button><br>
+
+<p id="inviteLink"></p>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+<script>
+// Check logged-in user
+let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!loggedIn || loggedIn.role !== "admin"){
+    alert("Access denied!");
+    window.location.href = "dashboard.html";
+}
+
+function generateInvite(){
+    let email = document.getElementById("adminEmail").value.trim();
+    if(!email){
+        alert("Please enter an email!");
+        return;
+    }
+
+    // Save invite in localStorage (optional)
+    let invites = JSON.parse(localStorage.getItem("adminInvites")) || [];
+    invites.push(email);
+    localStorage.setItem("adminInvites", JSON.stringify(invites));
+
+    // Create a simple registration link
+    let link = `${window.location.origin}/register_admin.html?email=${encodeURIComponent(email)}`;
+    document.getElementById("inviteLink").innerHTML = `Invite link: <a href="${link}" target="_blank">${link}</a>`;
+}
+</script>
+
+</body>
+</html>

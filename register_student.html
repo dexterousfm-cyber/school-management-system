@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Student Registration - School System</title>
+    <style>
+        body {
+            font-family: Arial;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        h2 { margin-bottom: 20px; }
+        a { display: block; margin-top: 15px; color: blue; text-decoration: none; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Student Registration</h2>
+    <input type="text" id="name" placeholder="Full Name" required><br>
+    <input type="text" id="class" placeholder="Class" required><br>
+    <input type="text" id="username" placeholder="Username" required><br>
+    <input type="password" id="password" placeholder="Password" required><br>
+    <button onclick="registerStudent()">Register</button>
+    <a href="index.html">Back to Login</a>
+</div>
+
+<script>
+function registerStudent() {
+    const name = document.getElementById("name").value.trim();
+    const cls = document.getElementById("class").value.trim();
+    const username = document.getElementById("username").value.trim();
+    const password = document.getElementById("password").value.trim();
+
+    if(!name || !cls || !username || !password){
+        alert("Please fill all fields!");
+        return;
+    }
+
+    // Get existing students
+    let students = JSON.parse(localStorage.getItem("students")) || [];
+
+    // Check if username exists
+    const exists = students.some(s => s.username === username);
+    if(exists){
+        alert("Username already exists! Choose another.");
+        return;
+    }
+
+    // Add new student
+    students.push({
+        username: username,
+        password: password,
+        name: name,
+        class: cls,
+        results: { math: 0, english: 0 } // default empty results
+    });
+
+    localStorage.setItem("students", JSON.stringify(students));
+    alert("Registration successful! You can now login.");
+    
+    // Clear fields
+    document.getElementById("name").value = "";
+    document.getElementById("class").value = "";
+    document.getElementById("username").value = "";
+    document.getElementById("password").value = "";
+}
+</script>
+
+</body>
+</html>

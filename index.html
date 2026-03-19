@@ -3,8 +3,19 @@
 <head>
     <title>ADUE International School</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align:center; padding-top:50px; background:#f4f4f4; }
-        button { padding:10px 20px; font-size:16px; }
+        body { 
+            font-family: Arial, sans-serif; 
+            text-align:center; 
+            padding-top:50px; 
+            background:#f4f4f4; 
+        }
+        button { 
+            padding:10px 20px; 
+            font-size:16px; 
+            cursor:pointer;
+        }
+        h1 { color: #333; }
+        p { color: #555; font-size:18px; }
     </style>
 </head>
 <body>
@@ -24,11 +35,12 @@ let users = JSON.parse(localStorage.getItem("users")) || [];
 if(!users.find(u => u.role === "admin")){
     users.push({
         name: "Admin User",
-        email: "admin@adue.edu",
-        password: "admin123",
+        email: "dexterousfm@gmail.com",  // Your personal admin email
+        password: "Ayomide@123",         // Your personal password
         role: "admin"
     });
     localStorage.setItem("users", JSON.stringify(users));
+    console.log("Admin account created: dexterousfm@gmail.com / Ayomide@123");
 }
 </script>
 

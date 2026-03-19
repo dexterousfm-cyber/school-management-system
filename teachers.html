@@ -1,139 +1,81 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Teachers - School System</title>
+    <title>Teachers</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: Arial;
+            background: #f4f4f4;
             margin: 0;
-            padding: 0;
         }
-
-        /* Navigation Bar */
         .nav {
             text-align: center;
             padding: 10px;
             background: #333;
         }
-
         .nav a {
             color: white;
             margin: 0 15px;
-            font-weight: bold;
             text-decoration: none;
+            font-weight: bold;
         }
-
         .nav a.current {
             text-decoration: underline;
         }
-
-        /* Table Styling */
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
+        .container {
+            width: 300px;
+            margin: 50px auto;
             background: white;
-        }
-
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-
-        th, td {
-            padding: 10px;
+            padding: 20px;
+            border-radius: 10px;
             text-align: center;
         }
-
-        /* Input & Button */
-        input, button {
-            padding: 10px;
-            margin: 10px 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-
         button {
-            background-color: green;
+            padding: 10px;
+            background: red;
             color: white;
             border: none;
+            border-radius: 5px;
             cursor: pointer;
-        }
-
-        button:hover {
-            background-color: #28a745;
-        }
-
-        /* Footer */
-        footer {
-            text-align: center;
-            padding: 20px;
-            background: #333;
-            color: white;
-            margin-top: 50px;
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Navigation Bar -->
-    <div class="nav">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="students.html">Students</a>
-        <a href="teachers.html" class="current">Teachers</a>
-    </div>
+<script>
+if (!localStorage.getItem("loggedInUser")) {
+    window.location.href = "index.html";
+}
+</script>
 
-    <!-- Page Title -->
-    <h2 style="text-align:center; margin-top:30px;">Teachers Management</h2>
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="students.html">Students</a>
+    <a href="teachers.html" class="current">Teachers</a>
+</div>
 
-    <!-- Add Teacher Form -->
-    <div style="width: 300px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; text-align: center;">
-        <input type="text" id="newTeacherName" placeholder="Teacher Name" required><br>
-        <input type="text" id="newTeacherSubject" placeholder="Subject" required><br>
-        <button onclick="addTeacher()">Add Teacher</button>
-    </div>
+<div class="container">
+    <h3 id="welcomeUser"></h3>
 
-    <!-- Teachers Table -->
-    <table id="teacherTable">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Teacher Name</th>
-                <th>Subject</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows will be added dynamically -->
-        </tbody>
-    </table>
+    <h2>Teachers Page</h2>
+    <p>No teachers added yet</p>
 
-    <!-- Footer -->
-    <footer>
-        School Management System by Abiola Ridwan Olamilekan
-    </footer>
+    <a href="add-teacher.html">Add Teacher</a>
+    <br><br>
 
-    <!-- JavaScript to add teachers dynamically -->
-    <script>
-        function addTeacher() {
-            var table = document.getElementById("teacherTable").getElementsByTagName('tbody')[0];
-            var name = document.getElementById("newTeacherName").value;
-            var subject = document.getElementById("newTeacherSubject").value;
+    <button onclick="logout()">Logout</button>
+</div>
 
-            if(name === "" || subject === "") {
-                alert("Please fill both fields");
-                return;
-            }
+<script>
+const user = localStorage.getItem("loggedInUser");
+document.getElementById("welcomeUser").textContent = "Welcome, " + user;
 
-            var rowCount = table.rows.length + 1;
-            var row = table.insertRow();
-            row.insertCell(0).innerHTML = rowCount;
-            row.insertCell(1).innerHTML = name;
-            row.insertCell(2).innerHTML = subject;
-
-            document.getElementById("newTeacherName").value = "";
-            document.getElementById("newTeacherSubject").value = "";
-        }
-    </script>
+function logout() {
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "index.html";
+}
+</script>
 
 </body>
 </html>

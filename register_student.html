@@ -2,48 +2,55 @@
 <html>
 <head>
     <title>Register Student - ADUE Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; text-align:center; padding:50px; background:#f4f4f4; }
+        input { padding:10px; margin:10px; width:250px; font-size:16px; }
+        button { padding:10px 25px; font-size:16px; cursor:pointer; }
+    </style>
 </head>
 <body>
 
-<h1>Register Student (Admin Only)</h1>
+<h1>Register New Student</h1>
 
 <input type="text" id="name" placeholder="Student Name"><br>
 <input type="email" id="email" placeholder="Student Email"><br>
-<input type="password" id="password" placeholder="Student Password"><br>
-<input type="text" id="class" placeholder="Class"><br>
+<input type="password" id="password" placeholder="Set Temporary Password"><br>
 <button onclick="registerStudent()">Register Student</button>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
 
 <script>
-const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-if(!loggedInUser || loggedInUser.role !== "admin"){
-    alert("Only admins can register students!");
-    window.location.href = "dashboard.html";
+let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!loggedIn || loggedIn.role !== "admin"){
+    alert("Access denied! Admin only");
+    window.location.href="login.html";
 }
 
 function registerStudent(){
-    const name = document.getElementById("name").value;
-    const email = document.getElementById("email").value;
+    const name = document.getElementById("name").value.trim();
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
-    const className = document.getElementById("class").value;
 
-    if(!name || !email || !password || !className){
-        alert("Please fill all fields");
+    if(!name || !email || !password){
+        alert("Please fill in all fields");
         return;
     }
 
     let users = JSON.parse(localStorage.getItem("users")) || [];
-    users.push({name, email, password, role:"student", class: className});
-    localStorage.setItem("users", JSON.stringify(users));
+    if(users.find(u => u.email.toLowerCase() === email.toLowerCase())){
+        alert("A user with this email already exists");
+        return;
+    }
 
-    alert("Student registered successfully!");
+    users.push({ name, email, password, role:"student" });
+    localStorage.setItem("users", JSON.stringify(users));
+    alert(`Student ${name} registered successfully!`);
+
     document.getElementById("name").value = "";
     document.getElementById("email").value = "";
     document.getElementById("password").value = "";
-    document.getElementById("class").value = "";
 }
 </script>
-
-<a href="dashboard.html">Back to Dashboard</a>
 
 </body>
 </html>

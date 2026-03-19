@@ -4,44 +4,84 @@
     <title>Dashboard - ADUE Portal</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: Arial; text-align:center; background:#f4f4f4; }
+        body { font-family: Arial; text-align:center; background:#f4f4f4; padding:20px; }
         .nav a { margin:0 15px; text-decoration:none; font-weight:bold; color:#333; }
         .card { display:inline-block; background:#fff; padding:20px; margin:20px; border-radius:10px; }
+        .info { margin-top:30px; font-size:18px; }
     </style>
 </head>
 <body>
 
-<div class="nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="students.html">Students</a>
-    <a href="teachers.html">Teachers</a>
-    <a href="index.html" onclick="logout()">Logout</a>
+<div class="nav" id="navBar">
+    <!-- Navigation links will be inserted by JS -->
 </div>
 
 <h1>Dashboard</h1>
 
-<div class="card">
-    <h2>Total Students</h2>
-    <p id="studentCount">0</p>
-</div>
-<div class="card">
-    <h2>Total Teachers</h2>
-    <p id="teacherCount">0</p>
-</div>
+<div id="dashboardContent"></div>
 
 <script>
 // Check login
 let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
 if(!loggedIn){ window.location.href="login.html"; }
 
-// Count students and teachers
 let users = JSON.parse(localStorage.getItem("users")) || [];
-document.getElementById("studentCount").innerText = users.filter(u=>u.role==="student").length;
-document.getElementById("teacherCount").innerText = users.filter(u=>u.role==="teacher").length;
+let dashboardDiv = document.getElementById("dashboardContent");
+let navBar = document.getElementById("navBar");
 
+// Create logout link
 function logout(){
     localStorage.removeItem("loggedInUser");
     window.location.href="index.html";
+}
+
+// Build dashboard based on role
+if(loggedIn.role === "admin"){
+    navBar.innerHTML = `
+        <a href="dashboard.html">Dashboard</a>
+        <a href="students.html">Students</a>
+        <a href="teachers.html">Teachers</a>
+        <a href="#" onclick="logout()">Logout</a>
+    `;
+
+    // Admin sees total students and teachers
+    let totalStudents = users.filter(u => u.role === "student").length;
+    let totalTeachers = users.filter(u => u.role === "teacher").length;
+
+    dashboardDiv.innerHTML = `
+        <div class="card">
+            <h2>Total Students</h2>
+            <p>${totalStudents}</p>
+            <button onclick="window.location.href='register_student.html'">Register Student</button>
+        </div>
+        <div class="card">
+            <h2>Total Teachers</h2>
+            <p>${totalTeachers}</p>
+            <button onclick="alert('Teacher invites will be implemented next')">Invite Teacher</button>
+        </div>
+    `;
+} else if(loggedIn.role === "teacher"){
+    navBar.innerHTML = `
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" onclick="logout()">Logout</a>
+    `;
+    dashboardDiv.innerHTML = `
+        <div class="info">
+            <p>Welcome Teacher: <strong>${loggedIn.name}</strong></p>
+            <p>Email: ${loggedIn.email}</p>
+        </div>
+    `;
+} else if(loggedIn.role === "student"){
+    navBar.innerHTML = `
+        <a href="dashboard.html">Dashboard</a>
+        <a href="#" onclick="logout()">Logout</a>
+    `;
+    dashboardDiv.innerHTML = `
+        <div class="info">
+            <p>Welcome Student: <strong>${loggedIn.name}</strong></p>
+            <p>Email: ${loggedIn.email}</p>
+        </div>
+    `;
 }
 </script>
 

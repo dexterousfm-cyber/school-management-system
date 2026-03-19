@@ -1,26 +1,80 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Login - School Management System</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            width: 300px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin: 10px 0;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+        button {
+            padding: 10px 20px;
+            background: green;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        h2 { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Login</h2>
+    <input type="text" id="username" placeholder="Username"><br>
+    <input type="password" id="password" placeholder="Password"><br>
+    <button onclick="login()">Login</button>
+</div>
+
 <script>
-const users = [
-    { username: 'admin', password: '1234' },
-    { username: 'teacher1', password: 'teach123' },
-    { username: 'student1', password: 'stud123' }
-];
+    // Predefined users
+    const users = [
+        { username: 'admin', password: '1234' },
+        { username: 'teacher1', password: 'teach123' },
+        { username: 'student1', password: 'stud123' }
+    ];
 
-function login() {
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value.trim();
-    const errorMsg = document.getElementById('error');
+    function login() {
+        const u = document.getElementById("username").value.trim();
+        const p = document.getElementById("password").value.trim();
 
-    // Find user
-    const foundUser = users.find(u => u.username === user && u.password === pass);
+        const found = users.find(x => x.username === u && x.password === p);
 
-    if (foundUser) {
-        // Save login session
-        localStorage.setItem("loggedInUser", user);
+        if(found) {
+            // Save logged-in user to Local Storage
+            localStorage.setItem("loggedInUser", u);
 
-        // Redirect to dashboard
-        window.location.href = "dashboard.html";
-    } else {
-        errorMsg.textContent = "Wrong username or password!";
+            // Initialize students and teachers arrays if they don't exist
+            if(!localStorage.getItem("students")) localStorage.setItem("students", JSON.stringify([]));
+            if(!localStorage.getItem("teachers")) localStorage.setItem("teachers", JSON.stringify([]));
+
+            // Redirect to dashboard
+            window.location.href = "dashboard.html";
+        } else {
+            alert("Invalid username or password");
+        }
     }
-}
 </script>
+
+</body>
+</html>

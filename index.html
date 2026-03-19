@@ -47,33 +47,27 @@
 </div>
 
 <script>
-    // Predefined users
-    const users = [
-        { username: 'admin', password: '1234' },
-        { username: 'teacher1', password: 'teach123' },
-        { username: 'student1', password: 'stud123' }
-    ];
+const users = [
+    { username: 'admin', password: '1234' },
+    { username: 'teacher1', password: 'teach123' },
+    { username: 'student1', password: 'stud123' }
+];
 
-    function login() {
-        const u = document.getElementById("username").value.trim();
-        const p = document.getElementById("password").value.trim();
+function login() {
+    const u = document.getElementById("username").value.trim();
+    const p = document.getElementById("password").value.trim();
 
-        const found = users.find(x => x.username === u && x.password === p);
+    const found = users.find(x => x.username === u && x.password === p);
 
-        if(found) {
-            // Save logged-in user to Local Storage
-            localStorage.setItem("loggedInUser", u);
-
-            // Initialize students and teachers arrays if they don't exist
-            if(!localStorage.getItem("students")) localStorage.setItem("students", JSON.stringify([]));
-            if(!localStorage.getItem("teachers")) localStorage.setItem("teachers", JSON.stringify([]));
-
-            // Redirect to dashboard
-            window.location.href = "dashboard.html";
-        } else {
-            alert("Invalid username or password");
-        }
+    if(found) {
+        localStorage.setItem("loggedInUser", u);
+        if(!localStorage.getItem("students")) localStorage.setItem("students", JSON.stringify([]));
+        if(!localStorage.getItem("teachers")) localStorage.setItem("teachers", JSON.stringify([]));
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Invalid username or password");
     }
+}
 </script>
 
 </body>

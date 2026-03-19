@@ -17,27 +17,27 @@
 <button onclick="login()">Login</button>
 
 <script>
-    function login() {
-        const email = document.getElementById("email").value;
-        const password = document.getElementById("password").value;
+function login() {
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-        // Example hardcoded users
-        const users = [
-            {email: "admin@adue.edu", password: "admin123", role:"admin"},
-            {email: "student1@adue.edu", password: "student123", role:"student"},
-            {email: "teacher1@adue.edu", password: "teacher123", role:"teacher"}
-        ];
+    // Hardcoded users
+    const users = [
+        {email:"admin@adue.edu", password:"admin123", role:"admin"},
+        {email:"student1@adue.edu", password:"student123", role:"student"},
+        {email:"teacher1@adue.edu", password:"teacher123", role:"teacher"}
+    ];
 
-        const user = users.find(u => u.email === email && u.password === password);
+    const user = users.find(u => u.email === email && u.password === password);
 
-        if(user){
-            // Store logged-in user info
-            localStorage.setItem("loggedInUser", JSON.stringify(user));
-            window.location.href = "dashboard.html";
-        } else {
-            alert("Invalid email or password");
-        }
+    if(user){
+        // Store logged-in user as string
+        localStorage.setItem("loggedInUser", JSON.stringify(user));
+        window.location.href = "dashboard.html";
+    } else {
+        alert("Invalid email or password");
     }
+}
 </script>
 
 </body>

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADUE Portal - Teacher Registration</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Teacher Registration</h1>
+
+        <form id="teacherRegisterForm">
+            <label for="fullname">Full Name:</label>
+            <input type="text" id="fullname" placeholder="Enter your full name" required>
+
+            <label for="email">Email:</label>
+            <input type="email" id="email" placeholder="Enter your email" required>
+
+            <label for="password">Password:</label>
+            <input type="password" id="password" placeholder="Enter your password" required>
+
+            <label for="subjects">Subjects (comma separated):</label>
+            <input type="text" id="subjects" placeholder="Math, English, Science" required>
+
+            <button type="submit">Register</button>
+        </form>
+
+        <p>Already registered? <a href="index.html">Login here</a></p>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

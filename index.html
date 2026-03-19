@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>ADUE International School</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
 </head>
 <body>
 
@@ -9,7 +10,11 @@
 <button onclick="window.location.href='login.html'">Go to Login</button>
 
 <script>
-// Force-create admin account on page load (for mobile users)
+// Clear old data and force-create admin
+localStorage.removeItem("users");
+localStorage.removeItem("loggedInUser");
+localStorage.removeItem("teacherInvites");
+
 let users = [
     {
         name: "Admin User",
@@ -19,9 +24,7 @@ let users = [
     }
 ];
 localStorage.setItem("users", JSON.stringify(users));
-localStorage.removeItem("loggedInUser");
-localStorage.removeItem("teacherInvites");
-console.log("Admin account created and old data cleared!");
+console.log("Admin account created!");
 </script>
 
 </body>

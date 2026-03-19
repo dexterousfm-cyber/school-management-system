@@ -1,71 +1,59 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Dashboard - Adue International School</title>
-    <meta name="description" content="Adue International School - Admin, Teacher, and Student dashboard for ADUE Portal.">
-    <meta name="keywords" content="Adue International School, ADUE Portal, Dashboard, Students, Teachers">
-    <meta name="author" content="Abiola Ridwan Olamilekan">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - ADUE Portal</title>
     <style>
-        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 0; }
-        .nav { text-align: center; padding: 10px; background: #333; }
-        .nav a { color: white; margin: 0 15px; font-weight: bold; text-decoration: none; }
-        .nav a.current { text-decoration: underline; }
-        .cards-container { width: 60%; margin: 50px auto; display: flex; justify-content: space-around; flex-wrap: wrap; }
-        .card { background: white; padding: 30px; border-radius: 10px; width: 40%; text-align: center; box-shadow: 0 0 10px rgba(0,0,0,0.1); margin-bottom: 20px; }
-        .card p { font-size: 24px; font-weight: bold; }
-        footer { text-align: center; padding: 20px; background: #333; color: white; margin-top: 50px; }
-        button.logout { background: red; margin-top: 10px; }
+        body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0;}
+        .nav { text-align:center; background:#333; padding:10px;}
+        .nav a { color:white; margin:0 10px; text-decoration:none; font-weight:bold;}
+        .nav a.current { text-decoration:underline;}
+        .cards-container { display:flex; justify-content:center; margin-top:50px; }
+        .card { background:white; padding:30px; margin:10px; border-radius:10px; box-shadow:0 0 10px rgba(0,0,0,0.1); width:200px; text-align:center;}
     </style>
 </head>
 <body>
 
 <script>
-const loggedUser = localStorage.getItem("loggedInUser");
-const loggedRole = localStorage.getItem("loggedInRole");
-if(!loggedUser || !loggedRole){ window.location.href = "index.html"; }
+    // Protect page
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if(!loggedInUser){
+        window.location.href = "login.html";
+    }
 </script>
 
 <div class="nav">
     <a href="dashboard.html" class="current">Dashboard</a>
     <a href="students.html">Students</a>
     <a href="teachers.html">Teachers</a>
-    <button class="logout" onclick="logout()">Logout</button>
+    <a href="#" onclick="logout()">Logout</a>
 </div>
 
-<div id="content" class="cards-container"></div>
+<h1 style="text-align:center;">Welcome, <span id="username"></span></h1>
 
-<footer>Adue International School by Abiola Ridwan Olamilekan</footer>
+<div class="cards-container">
+    <div class="card">
+        <h2>Total Students</h2>
+        <p id="studentCount">0</p>
+        <a href="students.html">Go to Students</a>
+    </div>
+    <div class="card">
+        <h2>Total Teachers</h2>
+        <p id="teacherCount">0</p>
+        <a href="teachers.html">Go to Teachers</a>
+    </div>
+</div>
 
 <script>
-function logout(){
-    localStorage.removeItem("loggedInUser");
-    localStorage.removeItem("loggedInRole");
-    window.location.href = "index.html";
-}
+    document.getElementById("username").innerText = loggedInUser.email;
 
-function loadDashboard(){
-    const content = document.getElementById("content");
-    const students = JSON.parse(localStorage.getItem("students")) || [];
-    const teachers = JSON.parse(localStorage.getItem("teachers")) || [];
+    // Fake count example
+    document.getElementById("studentCount").innerText = 10;
+    document.getElementById("teacherCount").innerText = 5;
 
-    if(loggedRole === "student"){
-        const student = students.find(s => s.username === loggedUser);
-        content.innerHTML = `
-            <div class="card"><h2>Welcome, ${student.name}</h2><p>Class: ${student.class}</p></div>
-            <div class="card"><h2>Results</h2>
-            <p>Math: ${student.results.math}</p>
-            <p>English: ${student.results.english}</p></div>
-        `;
-    } else {
-        content.innerHTML = `
-            <div class="card"><h2>Total Students</h2><p>${students.length}</p><a href="students.html">Go to Students</a></div>
-            <div class="card"><h2>Total Teachers</h2><p>${teachers.length}</p><a href="teachers.html">Go to Teachers</a></div>
-        `;
+    function logout(){
+        localStorage.removeItem("loggedInUser");
+        window.location.href = "login.html";
     }
-}
-window.onload = loadDashboard;
 </script>
 
 </body>

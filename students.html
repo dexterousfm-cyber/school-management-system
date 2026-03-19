@@ -2,64 +2,58 @@
 <html>
 <head>
     <title>Students - ADUE Portal</title>
-    <style>
-        body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:0;}
-        .nav { text-align:center; background:#333; padding:10px;}
-        .nav a { color:white; margin:0 10px; text-decoration:none; font-weight:bold;}
-        .nav a.current { text-decoration:underline;}
-        table { margin:20px auto; border-collapse:collapse; width:80%; background:white; }
-        th, td { border:1px solid #333; padding:10px; text-align:center; }
-    </style>
 </head>
 <body>
 
 <script>
-    // Protect page
-    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
-    if(!loggedInUser){
-        window.location.href = "login.html";
-    }
+const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!loggedInUser){
+    window.location.href = "login.html";
+}
 
-    // Only students and admins can view
-    if(loggedInUser.role === "teacher"){
-        alert("Teachers cannot view this page!");
-        window.location.href = "dashboard.html";
+// Only admin and students can view
+if(loggedInUser.role === "teacher"){
+    alert("Teachers cannot view this page!");
+    window.location.href = "dashboard.html";
+}
+
+const users = JSON.parse(localStorage.getItem("users")) || [];
+const students = users.filter(u => u.role === "student");
+
+const table = document.createElement("table");
+table.border = "1";
+table.style.margin = "20px auto";
+
+const header = table.insertRow();
+header.innerHTML = "<th>Name</th><th>Email</th><th>Class</th>";
+
+// Admin sees all students
+if(loggedInUser.role === "admin"){
+    students.forEach(s => {
+        const row = table.insertRow();
+        row.innerHTML = `<td>${s.name}</td><td>${s.email}</td><td>${s.class}</td>`;
+    });
+}
+// Student sees only their own info
+else if(loggedInUser.role === "student"){
+    const s = students.find(st => st.email === loggedInUser.email);
+    if(s){
+        const row = table.insertRow();
+        row.innerHTML = `<td>${s.name}</td><td>${s.email}</td><td>${s.class}</td>`;
     }
+}
+
+document.body.appendChild(table);
+
+function logout(){
+    localStorage.removeItem("loggedInUser");
+    window.location.href = "login.html";
+}
 </script>
 
-<div class="nav">
-    <a href="dashboard.html">Dashboard</a>
-    <a href="students.html" class="current">Students</a>
-    <a href="teachers.html">Teachers</a>
-    <a href="#" onclick="logout()">Logout</a>
-</div>
-
-<h1 style="text-align:center;">Students List</h1>
-
-<table>
-    <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Class</th>
-    </tr>
-    <tr>
-        <td>John Doe</td>
-        <td>student1@adue.edu</td>
-        <td>Grade 10</td>
-    </tr>
-    <tr>
-        <td>Jane Smith</td>
-        <td>student2@adue.edu</td>
-        <td>Grade 9</td>
-    </tr>
-</table>
-
-<script>
-    function logout(){
-        localStorage.removeItem("loggedInUser");
-        window.location.href = "login.html";
-    }
-</script>
+<br>
+<a href="dashboard.html">Back to Dashboard</a> | 
+<a href="#" onclick="logout()">Logout</a>
 
 </body>
 </html>

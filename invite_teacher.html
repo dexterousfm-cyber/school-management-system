@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Invite Teacher - ADUE Portal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: Arial; text-align:center; padding:50px; background:#f4f4f4; }
+        input { padding:10px; margin:10px; width:250px; font-size:16px; }
+        button { padding:10px 25px; font-size:16px; cursor:pointer; }
+        textarea { width:80%; height:60px; margin-top:20px; }
+    </style>
+</head>
+<body>
+
+<h1>Invite Teacher</h1>
+
+<input type="text" id="teacherName" placeholder="Teacher Name"><br>
+<input type="email" id="teacherEmail" placeholder="Teacher Email"><br>
+<button onclick="inviteTeacher()">Generate Invite Link</button>
+<button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
+
+<div>
+    <textarea id="inviteLink" readonly placeholder="Invite link will appear here"></textarea>
+</div>
+
+<script>
+let loggedIn = JSON.parse(localStorage.getItem("loggedInUser"));
+if(!loggedIn || loggedIn.role !== "admin"){ alert("Access denied!"); window.location.href="login.html"; }
+
+function inviteTeacher(){
+    const name = document.getElementById("teacherName").value.trim();
+    const email = document.getElementById("teacherEmail").value.trim();
+    if(!name || !email){ alert("Please fill all fields"); return; }
+
+    // Generate a unique code for teacher
+    let code = Math.random().toString(36).substring(2,10);
+
+    // Save invite in localStorage
+    let invites = JSON.parse(localStorage.getItem("teacherInvites")) || [];
+    invites.push({name, email, code});
+    localStorage.setItem("teacherInvites", JSON.stringify(invites));
+
+    // Generate a "link" (simulate email)
+    let link = `${window.location.origin}/register_teacher.html?code=${code}`;
+    document.getElementById("inviteLink").value = `Share this link with the teacher:\n${link}`;
+
+    alert("Invite link generated! Share it with the teacher.");
+}
+</script>
+
+</body>
+</html>

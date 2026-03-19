@@ -1,94 +1,34 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <title>Adue International School - ADUE PORTAL</title>
-    <meta name="description" content="Adue International School - Login to the ADUE Portal to access students, teachers, and results.">
-    <meta name="keywords" content="Adue International School, ADUE Portal, School Management, Students, Teachers, Results">
-    <meta name="author" content="Abiola Ridwan Olamilekan">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ADUE International School</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            padding: 30px;
-            border-radius: 10px;
-            width: 350px;
-            text-align: center;
-            box-shadow: 0 0 15px rgba(0,0,0,0.2);
-        }
-        input {
-            width: 90%;
-            padding: 10px;
-            margin: 10px 0;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            padding: 10px 20px;
-            background: green;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-        h2 { margin-bottom: 20px; }
-        a { display: block; margin-top: 15px; color: blue; text-decoration: none; }
+        body { font-family: Arial, sans-serif; text-align:center; padding-top:50px; background:#f4f4f4; }
+        button { padding:10px 20px; font-size:16px; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h2>Login - Adue International School</h2>
-    <input type="text" id="username" placeholder="Username"><br>
-    <input type="password" id="password" placeholder="Password"><br>
-    <button onclick="login()">Login</button>
-    <a href="register_student.html">Student Registration</a>
-</div>
+<h1>Welcome to ADUE International School Portal</h1>
+<p>Manage Students and Teachers easily</p>
+
+<button onclick="goLogin()">Go to Login</button>
 
 <script>
-function login() {
-    const u = document.getElementById("username").value.trim();
-    const p = document.getElementById("password").value.trim();
+function goLogin(){
+    window.location.href = "login.html";
+}
 
-    if(!u || !p){
-        alert("Please enter both username and password");
-        return;
-    }
-
-    const adminUser = { username: 'admin', password: '1234' };
-    const students = JSON.parse(localStorage.getItem("students")) || [];
-    const teachers = JSON.parse(localStorage.getItem("teachers")) || [];
-
-    let role = "";
-    let foundUser = null;
-
-    if(u === adminUser.username && p === adminUser.password){
-        role = "admin";
-        foundUser = adminUser;
-    } else {
-        foundUser = teachers.find(t => t.username === u && t.password === p);
-        if(foundUser) role = "teacher";
-        else {
-            foundUser = students.find(s => s.username === u && s.password === p);
-            if(foundUser) role = "student";
-        }
-    }
-
-    if(foundUser && role){
-        localStorage.setItem("loggedInUser", u);
-        localStorage.setItem("loggedInRole", role);
-        window.location.href = "dashboard.html";
-    } else {
-        alert("Invalid username or password");
-    }
+// Initialize admin account if it doesn't exist
+let users = JSON.parse(localStorage.getItem("users")) || [];
+if(!users.find(u => u.role === "admin")){
+    users.push({
+        name: "Admin User",
+        email: "admin@adue.edu",
+        password: "admin123",
+        role: "admin"
+    });
+    localStorage.setItem("users", JSON.stringify(users));
 }
 </script>
 

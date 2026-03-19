@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Students - School System</title>
+    <title>Students</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+            font-family: Arial;
+            background: #f4f4f4;
             margin: 0;
-            padding: 0;
         }
         .nav {
             text-align: center;
@@ -17,109 +16,42 @@
         .nav a {
             color: white;
             margin: 0 15px;
-            font-weight: bold;
             text-decoration: none;
+            font-weight: bold;
         }
         .nav a.current {
             text-decoration: underline;
         }
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
+        .container {
+            width: 300px;
+            margin: 50px auto;
             background: white;
-        }
-        table, th, td {
-            border: 1px solid #ccc;
-        }
-        th, td {
-            padding: 10px;
-            text-align: center;
-        }
-        input, button {
-            padding: 10px;
-            margin: 10px 5px;
-            border-radius: 5px;
-            border: 1px solid #ccc;
-        }
-        button {
-            background-color: green;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background-color: #28a745;
-        }
-        footer {
-            text-align: center;
             padding: 20px;
-            background: #333;
-            color: white;
-            margin-top: 50px;
+            border-radius: 10px;
+            text-align: center;
         }
     </style>
 </head>
+
 <body>
 
-    <!-- Navigation Bar -->
-    <div class="nav">
-        <a href="dashboard.html">Dashboard</a>
-        <a href="students.html" class="current">Students</a>
-        <a href="teachers.html">Teachers</a>
-    </div>
+<script>
+if (!localStorage.getItem("loggedInUser")) {
+    window.location.href = "index.html";
+}
+</script>
 
-    <!-- Page Title -->
-    <h2 style="text-align:center; margin-top:30px;">Students Management</h2>
+<div class="nav">
+    <a href="dashboard.html">Dashboard</a>
+    <a href="students.html" class="current">Students</a>
+    <a href="teachers.html">Teachers</a>
+</div>
 
-    <!-- Add Student Form -->
-    <div style="width: 300px; margin: 20px auto; padding: 20px; background: white; border-radius: 10px; text-align: center;">
-        <input type="text" id="newStudentName" placeholder="Student Name" required><br>
-        <input type="text" id="newStudentClass" placeholder="Class" required><br>
-        <button onclick="addStudent()">Add Student</button>
-    </div>
-
-    <!-- Students Table -->
-    <table id="studentTable">
-        <thead>
-            <tr>
-                <th>#</th>
-                <th>Student Name</th>
-                <th>Class</th>
-            </tr>
-        </thead>
-        <tbody>
-            <!-- Rows added dynamically -->
-        </tbody>
-    </table>
-
-    <!-- Footer -->
-    <footer>
-        School Management System by Abiola Ridwan Olamilekan
-    </footer>
-
-    <!-- JavaScript -->
-    <script>
-        function addStudent() {
-            var table = document.getElementById("studentTable").getElementsByTagName('tbody')[0];
-            var name = document.getElementById("newStudentName").value;
-            var cls = document.getElementById("newStudentClass").value;
-
-            if(name === "" || cls === "") {
-                alert("Please fill both fields");
-                return;
-            }
-
-            var rowCount = table.rows.length + 1;
-            var row = table.insertRow();
-            row.insertCell(0).innerHTML = rowCount;
-            row.insertCell(1).innerHTML = name;
-            row.insertCell(2).innerHTML = cls;
-
-            document.getElementById("newStudentName").value = "";
-            document.getElementById("newStudentClass").value = "";
-        }
-    </script>
+<div class="container">
+    <h2>Students Page</h2>
+    <p>No students added yet</p>
+    <a href="add-student.html">Add Student</a>
+</div>
 
 </body>
 </html>

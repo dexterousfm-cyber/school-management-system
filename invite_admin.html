@@ -21,7 +21,7 @@
 <button onclick="window.location.href='dashboard.html'">Back to Dashboard</button>
 
 <script>
-    // ✅ Initialize EmailJS with your Public Key
+    // Initialize EmailJS with your actual Public Key
     emailjs.init("Cdc-P4Ew1nxdkEXN0"); 
 
     // Check if logged-in user is admin
@@ -44,10 +44,10 @@
         console.log("Sending invite to:", email);
         console.log("Invite link:", link);
 
-        // ✅ Send email via EmailJS
+        // Send email via EmailJS
         emailjs.send(
-            "service_m1r9p09",          // Your Gmail service ID
-            "YOUR_TEMPLATE_ID",         // <-- Replace with your actual EmailJS template ID
+            "service_m1r9p09",   // Gmail Service ID
+            "Hc0Y5G5YepKUjU2Wg", // Admin Invite Template ID
             {
                 to_email: email,
                 invite_link: link

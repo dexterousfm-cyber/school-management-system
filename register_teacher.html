@@ -1,62 +1,42 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Register Teacher - ADUE Portal</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: Arial; text-align:center; padding:50px; background:#f4f4f4; }
-        input { padding:10px; margin:10px; width:250px; font-size:16px; }
-        button { padding:10px 25px; font-size:16px; cursor:pointer; }
-    </style>
-</head>
-<body>
-
-<h1>Teacher Registration</h1>
-
-<input type="text" id="name" placeholder="Full Name"><br>
-<input type="email" id="email" placeholder="Email"><br>
-<input type="password" id="password" placeholder="Set Password"><br>
+<h2>Teacher Registration</h2>
+<input type="text" id="teacherName" placeholder="Full Name"><br>
+<input type="email" id="teacherEmail" placeholder="Email"><br>
+<input type="password" id="teacherPassword" placeholder="Password"><br>
+<select id="teacherSubject">
+    <option value="">Select Subject</option>
+    <option value="Math">Math</option>
+    <option value="English">English</option>
+    <option value="Science">Science</option>
+</select><br>
 <button onclick="registerTeacher()">Register</button>
+<p id="teacherStatus"></p>
 
 <script>
-// Get invite code from URL
-const params = new URLSearchParams(window.location.search);
-const code = params.get("code");
-
-let invites = JSON.parse(localStorage.getItem("teacherInvites")) || [];
-let invite = invites.find(i => i.code === code);
-if(!invite){ alert("Invalid or expired invite!"); window.location.href="login.html"; }
-
-// Pre-fill name and email
-document.getElementById("name").value = invite.name;
-document.getElementById("email").value = invite.email;
+let users = JSON.parse(localStorage.getItem("users")) || [];
 
 function registerTeacher(){
-    const name = document.getElementById("name").value.trim();
-    const email = document.getElementById("email").value.trim();
-    const password = document.getElementById("password").value;
+    let name = document.getElementById("teacherName").value.trim();
+    let email = document.getElementById("teacherEmail").value.trim();
+    let password = document.getElementById("teacherPassword").value.trim();
+    let subject = document.getElementById("teacherSubject").value;
 
-    if(!name || !email || !password){ alert("Please fill all fields"); return; }
-
-    let users = JSON.parse(localStorage.getItem("users")) || [];
-
-    if(users.find(u => u.email.toLowerCase() === email.toLowerCase())){
-        alert("A user with this email already exists");
+    if(!name || !email || !password || !subject){
+        alert("All fields are required!");
         return;
     }
 
-    // Add teacher
-    users.push({name, email, password, role:"teacher"});
+    if(users.some(u => u.email === email)){
+        document.getElementById("teacherStatus").innerText = "Teacher with this email already exists!";
+        return;
+    }
+
+    // Directly approved
+    users.push({name, email, password, role:"teacher", subject});
     localStorage.setItem("users", JSON.stringify(users));
-
-    // Remove invite
-    invites = invites.filter(i => i.code !== code);
-    localStorage.setItem("teacherInvites", JSON.stringify(invites));
-
-    alert("Teacher registered successfully! You can now log in.");
-    window.location.href = "login.html";
+    document.getElementById("teacherStatus").innerText = "Registration successful! You can now receive students.";
+    document.getElementById("teacherName").value = "";
+    document.getElementById("teacherEmail").value = "";
+    document.getElementById("teacherPassword").value = "";
+    document.getElementById("teacherSubject").value = "";
 }
 </script>
-
-</body>
-</html>

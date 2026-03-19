@@ -2,27 +2,65 @@
 <html>
 <head>
     <title>ADUE Portal Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 400px;
+            margin: 50px auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 8px;
+            margin: 5px 0 15px 0;
+            box-sizing: border-box;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover { background-color: #45a049; }
+        .register-link {
+            margin-top: 10px;
+            text-align: center;
+        }
+        .register-link a {
+            color: green;
+            font-weight: bold;
+            text-decoration: none;
+        }
+        .register-link a:hover {
+            text-decoration: underline;
+        }
+        #status {
+            color: red;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+    </style>
 </head>
 <body>
 
-<h1>ADUE Portal Login</h1>
+<h1 style="text-align:center;">ADUE Portal Login</h1>
 
-<!-- Login Form -->
-<input type="email" id="loginEmail" placeholder="Email"><br><br>
-<input type="password" id="loginPassword" placeholder="Password"><br><br>
+<input type="email" id="loginEmail" placeholder="Email">
+<input type="password" id="loginPassword" placeholder="Password">
 <button onclick="login()">Login</button>
 
 <p id="status"></p>
 
-<!-- Info for students/admin -->
-<p>
-    Don't have an account? Contact Admin to create one.
-</p>
+<p style="text-align:center;">Don't have an account? Contact Admin to create one.</p>
 
 <!-- Teacher registration button -->
-<p>
+<div class="register-link">
     Are you a teacher? <a href="register_teacher.html">Register here</a>
-</p>
+</div>
 
 <script>
 // Get users from localStorage
@@ -34,7 +72,7 @@ function login(){
     let password = document.getElementById("loginPassword").value.trim();
 
     if(!email || !password){
-        alert("Fill all fields");
+        alert("Please fill all fields");
         return;
     }
 
@@ -42,7 +80,7 @@ function login(){
     let user = users.find(u => u.email === email && u.password === password);
 
     if(!user){
-        alert("Invalid credentials");
+        document.getElementById("status").innerText = "Invalid email or password";
         return;
     }
 

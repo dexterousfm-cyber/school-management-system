@@ -17,18 +17,30 @@
 <button onclick="login()">Login</button>
 
 <script>
+// Clear previous session
+localStorage.removeItem("loggedInUser");
+
 function login() {
-    const email = document.getElementById("email").value;
+    const email = document.getElementById("email").value.trim();
     const password = document.getElementById("password").value;
 
-    const users = JSON.parse(localStorage.getItem("users")) || [];
-    const user = users.find(u => u.email === email && u.password === password);
+    if(!email || !password){
+        alert("Please enter both email and password");
+        return;
+    }
+
+    let users = JSON.parse(localStorage.getItem("users")) || [];
+
+    // Check for matching user
+    const user = users.find(u => u.email.toLowerCase() === email.toLowerCase() && u.password === password);
 
     if(user){
+        // Save session
         localStorage.setItem("loggedInUser", JSON.stringify(user));
+        alert(`Welcome ${user.name}!`);
         window.location.href = "dashboard.html";
     } else {
-        alert("Invalid email or password");
+        alert("Invalid email or password. Please check your credentials.");
     }
 }
 </script>

@@ -17,4 +17,12 @@ input, select, button {
     width: 100%;
     padding: 10px;
     margin: 10px 0;
+
+.logo {
+    text-align: center;  /* centers the logo */
+    margin-bottom: 20px; /* space between logo and portal heading */
+}
+.logo img {
+    max-width: 200px;    /* adjust logo size */
+    height: auto;
 }

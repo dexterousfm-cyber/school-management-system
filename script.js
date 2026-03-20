@@ -1,23 +1,27 @@
+// Grab the form
 const loginForm = document.getElementById('loginForm');
 
 loginForm.addEventListener('submit', function(e) {
     e.preventDefault(); // prevent page reload
 
-    const email = document.getElementById('email') ? document.getElementById('email').value : '';
-    const password = document.getElementById('password') ? document.getElementById('password').value : '';
+    // Get input values
+    const studentId = document.getElementById('studentId').value.trim();
+    const password = document.getElementById('password').value.trim();
 
-    // Simple validation
-    if (email === '' || password === '') {
-        alert('Please fill in both email and password!');
-        return;
-    }
+    // Simple test login
+    // You can change these credentials for testing
+    const testAccounts = [
+        { id: 'student1', password: '1234' },
+        { id: 'staff1', password: 'abcd' }
+    ];
 
-    // Fake login logic (for testing only)
-    if (email === 'admin@adue.com' && password === '123456') {
-        alert('Login successful! Welcome Admin.');
-        // Redirect to dashboard page if needed
-        window.location.href = 'admin_dashboard.html';
+    const matched = testAccounts.find(acc => acc.id === studentId && acc.password === password);
+
+    if (matched) {
+        alert('Login successful! Welcome ' + studentId);
+        // Redirect to dashboard (replace with your real page)
+        window.location.href = 'student_dashboard.html';
     } else {
-        alert('Incorrect email or password!');
+        alert('Invalid Student/Staff ID or password');
     }
 });

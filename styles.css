@@ -23,18 +23,17 @@ body {
 }
 
 .logo-header {
-    height: auto;
-    width: auto;
     max-height: 100px;
+    width: auto;
     margin-right: 20px;
 }
 
 .header h1 {
     font-size: 26px;
-    color: #800020; /* wine color */
+    color: #800020;
 }
 
-/* Center wrapper to center box vertically & horizontally */
+/* Wrapper to center login box vertically and horizontally */
 .login-wrapper {
     flex: 1;
     display: flex;
@@ -42,9 +41,10 @@ body {
     align-items: center;
 }
 
-/* Centered login box */
+/* Login box */
 .login-box {
     width: 400px;
+    max-width: 90%;
     padding: 40px;
     background-color: #ffffff;
     border-radius: 10px;
@@ -54,9 +54,10 @@ body {
 
 /* Logo on top of login box */
 .logo-box {
-    height: 100px; /* visible and sharp */
-    width: auto;
-    margin-bottom: 20px;
+    display: block;
+    margin: 0 auto 20px auto;
+    max-width: 50%;   /* logo smaller than box */
+    height: auto;
 }
 
 /* Input fields */
@@ -80,6 +81,7 @@ body {
     font-size: 16px;
     cursor: pointer;
 }
+
 .login-box button:hover {
     background-color: #a00030;
 }
@@ -114,6 +116,6 @@ body {
         max-height: 60px;
     }
     .logo-box {
-        height: 80px;
+        max-width: 60%;
     }
 }

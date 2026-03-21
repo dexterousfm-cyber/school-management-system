@@ -5,35 +5,107 @@
 <title>Admin Dashboard</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
-.header { background:#800000; color:white; padding:15px; display:flex; align-items:center; }
-.header img { width:60px; margin-right:15px; }
-.dashboard-wrapper { padding:20px; }
-.admin-info { display:flex; align-items:center; background:white; padding:15px; border-radius:8px; box-shadow:0 2px 6px rgba(0,0,0,0.2); margin-bottom:20px; }
-.admin-info img { border-radius:50%; width:100px; margin-right:15px; }
-.actions { margin-bottom:20px; }
-.actions button { margin-right:15px; padding:10px 20px; background:#800000; color:white; border:none; border-radius:5px; cursor:pointer; }
-.actions button:hover { background:#a00000; }
-
-table { width:100%; border-collapse: collapse; border-radius:8px; overflow:hidden; margin-bottom:30px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-th, td { padding:12px; text-align:left; border-bottom:1px solid #ddd; }
-th { background:#800000; color:white; }
-td img { border-radius:50%; width:50px; }
-button.edit-btn { padding:5px 10px; background:#800000; color:white; border:none; border-radius:4px; cursor:pointer; }
-button.edit-btn:hover { background:#a00000; }
+body{font-family:Arial, sans-serif;margin:0;padding:0;background:#f9f9f9;}
+.header{background:#800000;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;}
+.header .profile{display:flex;align-items:center;gap:15px;}
+.header img.logo{width:60px;}
+.header img.avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid white;}
+#logoutBtn{padding:8px 15px;background:white;color:#800000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;}
+#logoutBtn:hover{background:#f0f0f0;}
+.container{padding:20px;}
+h2{color:#800000;}
+table{width:100%;border-collapse:collapse;margin-top:15px;}
+table, th, td{border:1px solid #ccc;}
+th, td{padding:10px;text-align:center;}
+th{background:#800000;color:white;}
+img.avatar-small{width:50px;height:50px;border-radius:50%;object-fit:cover;}
+button.action-btn{padding:5px 10px;background:#800000;color:white;border:none;border-radius:5px;cursor:pointer;}
+button.action-btn:hover{background:#a00000;}
 </style>
 </head>
 <body>
 
 <div class="header">
-    <img src="logo-new.png" alt="School Logo">
-    <h1>ADUE International School</h1>
+    <div class="profile">
+        <img src="logo-new.png" alt="School Logo" class="logo">
+        <div>
+            <img id="headerAvatar" src="admin.png" class="avatar">
+            <h1 id="headerName">Welcome Admin</h1>
+        </div>
+    </div>
+    <button id="logoutBtn">Logout</button>
 </div>
 
-<div class="dashboard-wrapper">
+<div class="container">
+    <div style="margin:10px 0;">
+        <button onclick="window.location.href='register_teacher.html'" class="action-btn">Register Teacher</button>
+        <button onclick="window.location.href='register_student.html'" class="action-btn">Register Student</button>
+    </div>
 
-    <div class="admin-info">
-        <img id="adminPic" src="admin.png" alt="Admin Picture">
+    <h2>Teachers List</h2>
+    <table id="teachersTable">
+        <tr><th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th></tr>
+    </table>
+
+    <h2>Students List</h2>
+    <table id="studentsTable">
+        <tr><th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th></tr>
+    </table>
+</div>
+
+<script>
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', function(){
+    localStorage.removeItem('currentAdminIndex');
+    window.location.href='index.html';
+});
+
+// Load Admin Profile (if multiple admins)
+let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
+let admins = JSON.parse(localStorage.getItem('admins')) || [{name:'Admin', profilePicture:'admin.png'}];
+document.getElementById('headerName').innerText = 'Welcome ' + admins[currentAdminIndex].name;
+document.getElementById('headerAvatar').src = admins[currentAdminIndex].profilePicture;
+
+// Load Teachers
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+let teachersTable = document.getElementById('teachersTable');
+teachers.forEach((t,i)=>{
+    let row = teachersTable.insertRow();
+    row.insertCell(0).innerHTML = `<img src="${t.profilePicture}" class="avatar-small">`;
+    row.insertCell(1).innerText = t.name;
+    row.insertCell(2).innerText = t.email;
+    row.insertCell(3).innerText = t.teacherID;
+    row.insertCell(4).innerText = t.department;
+    row.insertCell(5).innerHTML = `<button class="action-btn" onclick="editTeacher(${i})">Edit</button>`;
+});
+
+function editTeacher(i){
+    localStorage.setItem('editTeacherIndex', i);
+    window.location.href='edit_teacher.html';
+}
+
+// Load Students
+let students = JSON.parse(localStorage.getItem('students')) || [];
+let studentsTable = document.getElementById('studentsTable');
+students.forEach((s,i)=>{
+    let row = studentsTable.insertRow();
+    row.insertCell(0).innerHTML = `<img src="${s.profilePicture}" class="avatar-small">`;
+    row.insertCell(1).innerText = s.name;
+    row.insertCell(2).innerText = s.email;
+    row.insertCell(3).innerText = s.studentID;
+    row.insertCell(4).innerText = s.studentClass;
+    row.insertCell(5).innerText = s.studentYear;
+    row.insertCell(6).innerHTML = `<button class="action-btn" onclick="editStudent(${i})">Edit</button>`;
+});
+
+function editStudent(i){
+    localStorage.setItem('editStudentIndex', i);
+    window.location.href='edit_student.html';
+}
+</script>
+
+</body>
+</html>        <img id="adminPic" src="admin.png" alt="Admin Picture">
         <h2>Welcome, <span id="adminName"></span></h2>
     </div>
 

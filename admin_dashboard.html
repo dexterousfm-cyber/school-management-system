@@ -14,42 +14,43 @@ body {
 
 /* Header */
 .header {
-    background: #800000;
-    color: white;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 30px;
+    background: #800000;
+    color: white;
 }
 
-.header .logo-section {
-    display: flex;
-    align-items: center;
-    gap: 15px;
-}
-
-.header .logo-section img.logo {
-    width: 80px;
-    height: 80px;
+/* Logo */
+.logo-section img {
+    width: 50px;
+    height: 50px;
     object-fit: cover;
 }
 
-.header .profile-section {
+/* Admin info + logout */
+.profile-section {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 10px;
 }
 
-.header .profile-section img.avatar {
-    width: 80px;
-    height: 80px;
+.profile-section img.avatar {
+    width: 50px;
+    height: 50px;
     border-radius: 50%;
     object-fit: cover;
     border: 2px solid white;
 }
 
+#headerName {
+    margin: 0;
+    font-size: 20px;
+}
+
 #logoutBtn {
-    padding: 10px 20px;
+    padding: 8px 15px;
     background: white;
     color: #800000;
     border: none;
@@ -58,7 +59,9 @@ body {
     font-weight: bold;
 }
 
-#logoutBtn:hover { background: #f0f0f0; }
+#logoutBtn:hover {
+    background: #f0f0f0;
+}
 
 /* Container */
 .container {
@@ -107,7 +110,9 @@ button.action-btn {
     cursor: pointer;
 }
 
-button.action-btn:hover { background: #a00000; }
+button.action-btn:hover {
+    background: #a00000;
+}
 
 .register-buttons {
     margin: 20px 0;
@@ -120,14 +125,17 @@ button.action-btn:hover { background: #a00000; }
 
 <!-- Header -->
 <div class="header">
+    <!-- Left: School logo -->
     <div class="logo-section">
-        <img src="logo-new.png" alt="School Logo" class="logo">
-        <div>
-            <img id="headerAvatar" src="admin.png" class="avatar">
-            <h1 id="headerName">Welcome Admin</h1>
-        </div>
+        <img src="logo-new.png" alt="School Logo">
     </div>
-    <button id="logoutBtn">Logout</button>
+
+    <!-- Right: Admin info + logout -->
+    <div class="profile-section">
+        <img id="headerAvatar" src="admin.png" class="avatar">
+        <h1 id="headerName">Welcome Admin</h1>
+        <button id="logoutBtn">Logout</button>
+    </div>
 </div>
 
 <!-- Main Content -->
@@ -211,97 +219,6 @@ students.forEach((s,i)=>{
 function editStudent(i){
     localStorage.setItem('editStudentIndex', i);
     window.location.href='edit_student.html';
-}
-</script>
-
-</body>
-</html>        <button onclick="window.location.href='register_teacher.html'">Register Teacher</button>
-        <button onclick="window.location.href='register_student.html'">Register Student</button>
-    </div>
-
-    <h2>Teachers List</h2>
-    <table id="teachersTable">
-        <tr>
-            <th>Picture</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>ID</th>
-            <th>Department</th>
-            <th>Edit</th>
-        </tr>
-    </table>
-
-    <h2>Students List</h2>
-    <table id="studentsTable">
-        <tr>
-            <th>Picture</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>ID</th>
-            <th>Class</th>
-            <th>Year</th>
-            <th>Edit</th>
-        </tr>
-    </table>
-
-</div>
-
-<script>
-let admins = JSON.parse(localStorage.getItem('admins')) || [];
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let students = JSON.parse(localStorage.getItem('students')) || [];
-let currentAdminIndex = parseInt(localStorage.getItem("currentAdminIndex")) || 0;
-
-// Display admin info
-const admin = admins[currentAdminIndex];
-document.getElementById("adminName").innerText = admin.name;
-document.getElementById("adminPic").src = admin.profilePicture || "admin.png";
-
-// Populate Teachers Table
-const teachersTable = document.getElementById("teachersTable");
-teachers.forEach((t,i)=>{
-    const row = teachersTable.insertRow();
-    row.innerHTML = `
-        <td><img src="${t.profilePicture || 'default.png'}"></td>
-        <td>${t.name}</td>
-        <td>${t.email}</td>
-        <td>${t.teacherID}</td>
-        <td>${t.department}</td>
-        <td><button class="edit-btn" onclick="editTeacher(${i})">Edit</button></td>
-    `;
-});
-
-// Populate Students Table
-const studentsTable = document.getElementById("studentsTable");
-students.forEach((s,i)=>{
-    const row = studentsTable.insertRow();
-    row.innerHTML = `
-        <td><img src="${s.profilePicture || 'default.png'}"></td>
-        <td>${s.name}</td>
-        <td>${s.email}</td>
-        <td>${s.studentID}</td>
-        <td>${s.studentClass}</td>
-        <td>${s.studentYear}</td>
-        <td><button class="edit-btn" onclick="editStudent(${i})">Edit</button></td>
-    `;
-});
-
-function editTeacher(index){
-    localStorage.setItem("editTeacherIndex", index);
-    window.location.href="edit_teacher.html";
-}
-function editStudent(index){
-    localStorage.setItem("editStudentIndex", index);
-    window.location.href="edit_student.html";
-}
-</script>
-
-</body>
-</html>    window.location.href="edit_teacher.html";
-}
-function editStudent(index){
-    localStorage.setItem("editStudentIndex", index);
-    window.location.href="edit_student.html";
 }
 </script>
 

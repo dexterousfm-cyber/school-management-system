@@ -1,85 +1,128 @@
-<!-- Main Content -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Admin Dashboard</title>
+<style>
+body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
+
+/* Header */
+.header { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#800000; color:white; }
+.header .logo img { width:120px; height:auto; object-fit:contain; }
+.header .profile { display:flex; align-items:center; gap:10px; }
+.header .profile img { width:40px; height:40px; border-radius:50%; border:1px solid white; object-fit:cover; }
+.header .profile span { font-weight:bold; }
+
+/* Container */
+.container { padding:30px; }
+
+/* Buttons */
+button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+button.primary { background:#800000; color:white; }
+button.primary:hover { background:#a00000; }
+
+/* Tables */
+table { width:100%; border-collapse:collapse; margin-top:20px; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.15); }
+th, td { padding:12px; text-align:center; border:1px solid #ddd; }
+th { background:#800000; color:white; }
+img.avatar-small { width:50px; height:50px; border-radius:50%; object-fit:cover; }
+table tr:hover { background:#fff2f2; }
+
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<div class="header">
+    <div class="logo"><img src="logo-new.png" alt="Logo"></div>
+    <div class="profile">
+        <img src="admin.png" alt="Admin">
+        <span id="adminName">Welcome Admin</span>
+        <button id="logoutBtn">Logout</button>
+    </div>
+</div>
+
 <div class="container">
-    <div class="register-buttons">
-        <button onclick="window.location.href='register_teacher.html'" class="action-btn">Register Teacher</button>
-        <button onclick="window.location.href='register_student.html'" class="action-btn">Register Student</button>
+
+    <!-- Actions -->
+    <div class="actions">
+        <button class="primary" onclick="alert('Register Teacher')">Register Teacher</button>
+        <button class="primary" onclick="alert('Register Student')">Register Student</button>
+        <button class="primary" onclick="showTable('teachers')">Show Teachers</button>
+        <button class="primary" onclick="showTable('students')">Show Students</button>
     </div>
 
-    <h2>Teachers List</h2>
-    <table id="teachersTable">
-        <tr>
-            <th>Picture</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Teacher ID</th>
-            <th>Department</th>
-            <th>Edit</th>
-        </tr>
-    </table>
+    <!-- Tables -->
+    <table id="teachersTable"></table>
+    <table id="studentsTable" style="display:none;"></table>
 
-    <h2>Students List</h2>
-    <table id="studentsTable">
-        <tr>
-            <th>Picture</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Student ID</th>
-            <th>Class</th>
-            <th>Year</th>
-            <th>Edit</th>
-        </tr>
-    </table>
 </div>
 
 <script>
+// Sample data
+let teachers = [
+    {profilePicture:'teacher.png', name:'John Doe', email:'john@example.com', teacherID:'T001', department:'Math'}
+];
+let students = [
+    {profilePicture:'student.png', name:'Jane Smith', email:'jane@example.com', studentID:'S001', studentClass:'JSS1', studentYear:'2026'}
+];
+
+// Render Teachers Table
+function renderTeachersTable(){
+    const table = document.getElementById('teachersTable');
+    let html = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th>
+    </tr>`;
+    teachers.forEach((t,i)=>{
+        html += `<tr>
+            <td><img src="${t.profilePicture}" class="avatar-small"></td>
+            <td>${t.name}</td>
+            <td>${t.email}</td>
+            <td>${t.teacherID}</td>
+            <td>${t.department}</td>
+            <td><button onclick="editTeacher(${i})">Edit</button></td>
+        </tr>`;
+    });
+    table.innerHTML = html;
+}
+
+// Render Students Table
+function renderStudentsTable(){
+    const table = document.getElementById('studentsTable');
+    let html = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th>
+    </tr>`;
+    students.forEach((s,i)=>{
+        html += `<tr>
+            <td><img src="${s.profilePicture}" class="avatar-small"></td>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td>${s.studentID}</td>
+            <td>${s.studentClass}</td>
+            <td>${s.studentYear}</td>
+            <td><button onclick="editStudent(${i})">Edit</button></td>
+        </tr>`;
+    });
+    table.innerHTML = html;
+}
+
+// Edit functions
+function editTeacher(i){ alert('Edit Teacher: '+teachers[i].name); }
+function editStudent(i){ alert('Edit Student: '+students[i].name); }
+
+// Toggle tables
+function showTable(table){
+    document.getElementById('teachersTable').style.display = (table==='teachers')?'':'none';
+    document.getElementById('studentsTable').style.display = (table==='students')?'':'none';
+}
+
+// Initial load
+renderTeachersTable();
+renderStudentsTable();
+showTable('teachers');
+
 // Logout
-document.getElementById('logoutBtn').addEventListener('click', function(){
-    localStorage.removeItem('currentAdminIndex');
-    window.location.href='index.html';
-});
-
-// Load Admin Profile
-let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
-let admins = JSON.parse(localStorage.getItem('admins')) || [{name:'Admin', profilePicture:'admin.png'}];
-document.getElementById('headerName').innerText = 'Welcome ' + admins[currentAdminIndex].name;
-document.getElementById('headerAvatar').src = admins[currentAdminIndex].profilePicture;
-
-// Load Teachers
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let teachersTable = document.getElementById('teachersTable');
-teachers.forEach((t,i)=>{
-    let row = teachersTable.insertRow();
-    row.insertCell(0).innerHTML = `<img src="${t.profilePicture}" class="avatar-small">`;
-    row.insertCell(1).innerText = t.name;
-    row.insertCell(2).innerText = t.email;
-    row.insertCell(3).innerText = t.teacherID;
-    row.insertCell(4).innerText = t.department;
-    row.insertCell(5).innerHTML = `<button class="action-btn" onclick="editTeacher(${i})">Edit</button>`;
-});
-
-function editTeacher(i){
-    localStorage.setItem('editTeacherIndex', i);
-    window.location.href='edit_teacher.html';
-}
-
-// Load Students
-let students = JSON.parse(localStorage.getItem('students')) || [];
-let studentsTable = document.getElementById('studentsTable');
-students.forEach((s,i)=>{
-    let row = studentsTable.insertRow();
-    row.insertCell(0).innerHTML = `<img src="${s.profilePicture}" class="avatar-small">`;
-    row.insertCell(1).innerText = s.name;
-    row.insertCell(2).innerText = s.email;
-    row.insertCell(3).innerText = s.studentID;
-    row.insertCell(4).innerText = s.studentClass;
-    row.insertCell(5).innerText = s.studentYear;
-    row.insertCell(6).innerHTML = `<button class="action-btn" onclick="editStudent(${i})">Edit</button>`;
-});
-
-function editStudent(i){
-    localStorage.setItem('editStudentIndex', i);
-    window.location.href='edit_student.html';
-}
+document.getElementById('logoutBtn').addEventListener('click', ()=>alert('Logout clicked'));
 </script>
 
 </body>

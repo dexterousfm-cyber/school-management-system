@@ -24,6 +24,7 @@ table tr:hover { background:#fff2f2; }
 .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
 .modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
 .modal-content input { width:100%; padding:5px; margin:5px 0; }
+.modal-content label { font-weight:normal; font-size:14px; display:block; margin-top:5px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -63,6 +64,7 @@ table tr:hover { background:#fff2f2; }
     <input type="text" id="teacherIDInput" placeholder="Teacher ID">
     <input type="text" id="teacherDeptInput" placeholder="Department">
     <input type="password" id="teacherPasswordInput" placeholder="Password">
+    <label><input type="checkbox" id="showTeacherPassword" onclick="togglePassword('teacher')"> Show Password</label>
     <input type="file" id="teacherPicInput">
     <button onclick="registerTeacher()">Register</button>
     <button onclick="closeTeacherForm()">Cancel</button>
@@ -78,6 +80,8 @@ table tr:hover { background:#fff2f2; }
     <input type="text" id="studentIDInput" placeholder="Student ID">
     <input type="text" id="studentClassInput" placeholder="Class">
     <input type="text" id="studentYearInput" placeholder="Year">
+    <input type="password" id="studentPasswordInput" placeholder="Password">
+    <label><input type="checkbox" id="showStudentPassword" onclick="togglePassword('student')"> Show Password</label>
     <input type="file" id="studentPicInput">
     <button onclick="registerStudent()">Register</button>
     <button onclick="closeStudentForm()">Cancel</button>
@@ -117,7 +121,16 @@ function renderTeachersTable(){
 
 function renderStudentsTable(){
     const table = document.getElementById('studentsTable');
-    let html = `<tr><th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th></tr>`;
+    let html = `<tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Student ID</th>
+        <th>Class</th>
+        <th>Year</th>
+        <th>Password</th>
+        <th>Edit</th>
+    </tr>`;
     students.forEach((s,i)=>{
         html += `<tr>
             <td><img src="${s.profilePicture}" class="avatar-small"></td>
@@ -126,6 +139,7 @@ function renderStudentsTable(){
             <td>${s.studentID}</td>
             <td>${s.studentClass}</td>
             <td>${s.studentYear}</td>
+            <td>${s.password}</td>
             <td><button onclick="editStudent(${i})">Edit</button></td>
         </tr>`;
     });
@@ -144,7 +158,18 @@ function editStudent(i){ alert('Edit Student: '+students[i].name); }
 
 // ---------------- LOGOUT ----------------
 function logout() {
-    window.location.href = 'index.html'; // replace 'index.html' with your actual login page
+    window.location.href = 'index.html'; // make sure this file exists
+}
+
+// ---------------- SHOW/HIDE PASSWORD ----------------
+function togglePassword(type) {
+    if(type === 'teacher'){
+        const pwd = document.getElementById('teacherPasswordInput');
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    } else if(type === 'student'){
+        const pwd = document.getElementById('studentPasswordInput');
+        pwd.type = pwd.type === 'password' ? 'text' : 'password';
+    }
 }
 
 // Teacher Form
@@ -184,20 +209,21 @@ function registerStudent(){
     let id = document.getElementById('studentIDInput').value;
     let studentClass = document.getElementById('studentClassInput').value;
     let year = document.getElementById('studentYearInput').value;
+    let password = document.getElementById('studentPasswordInput').value;
     let file = document.getElementById('studentPicInput').files[0];
 
-    if(!name || !email){ alert('Name and Email are required'); return; }
+    if(!name || !email || !password){ alert('Name, Email, and Password are required'); return; }
 
     let reader = new FileReader();
     reader.onload = function(e){
         let pic = e.target.result;
-        students.push({profilePicture:pic,name,email,studentID:id,studentClass,studentYear:year});
+        students.push({profilePicture:pic,name,email,studentID:id,studentClass,studentYear:year,password});
         renderStudentsTable();
         closeStudentForm();
     }
     if(file) reader.readAsDataURL(file);
     else {
-        students.push({profilePicture:'student.png',name,email,studentID:id,studentClass,studentYear:year});
+        students.push({profilePicture:'student.png',name,email,studentID:id,studentClass,studentYear:year,password});
         renderStudentsTable();
         closeStudentForm();
     }

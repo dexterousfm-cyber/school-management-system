@@ -5,103 +5,39 @@
 <title>Register Student - ADUE Portal</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-/* Header styling */
-.header {
-    background-color: #722F37; /* wine color */
-    padding: 20px;
-    text-align: center;
-    color: white;
-}
-.header img {
-    height: 50px;
-    vertical-align: middle;
-    margin-right: 15px;
-}
-.header h1 {
-    display: inline;
-    font-size: 24px;
-    vertical-align: middle;
-}
+.header { background-color:#722F37; padding:20px; text-align:center; color:white; }
+.header img { height:50px; vertical-align:middle; margin-right:15px; }
+.header h1 { display:inline; font-size:24px; vertical-align:middle; }
 
-/* Form wrapper */
-.registration-wrapper {
-    max-width: 500px;
-    margin: 40px auto;
-    padding: 30px;
-    background-color: #fff;
-    border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-}
-
-/* Form styling */
-.registration-wrapper h2 {
-    text-align: center;
-    color: #722F37; /* wine heading */
-    margin-bottom: 25px;
-}
-.registration-wrapper input {
-    width: 100%;
-    padding: 12px 15px;
-    margin: 10px 0;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 16px;
-}
-.registration-wrapper input:focus {
-    border-color: #722F37;
-    outline: none;
-}
-
-/* Submit button */
-.registration-wrapper button {
-    width: 100%;
-    padding: 14px;
-    margin-top: 15px;
-    background-color: #722F37;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-size: 18px;
-    cursor: pointer;
-}
-.registration-wrapper button:hover {
-    opacity: 0.9;
-}
-
-/* Optional links */
-.registration-wrapper .links {
-    text-align: center;
-    margin-top: 20px;
-}
-.registration-wrapper .links a {
-    color: #722F37;
-    text-decoration: none;
-    margin: 0 10px;
-}
-.registration-wrapper .links a:hover {
-    text-decoration: underline;
-}
+.registration-wrapper { max-width:500px; margin:40px auto; padding:30px; background-color:#fff; border-radius:12px; box-shadow:0 4px 12px rgba(0,0,0,0.1);}
+.registration-wrapper h2 { text-align:center; color:#722F37; margin-bottom:25px; }
+.registration-wrapper input { width:100%; padding:12px 15px; margin:10px 0; border-radius:8px; border:1px solid #ccc; font-size:16px; }
+.registration-wrapper input:focus { border-color:#722F37; outline:none; }
+.registration-wrapper button { width:100%; padding:14px; margin-top:15px; background-color:#722F37; color:white; border:none; border-radius:8px; font-size:18px; cursor:pointer; }
+.registration-wrapper button:hover { opacity:0.9; }
+.registration-wrapper .links { text-align:center; margin-top:20px; }
+.registration-wrapper .links a { color:#722F37; text-decoration:none; margin:0 10px; }
+.registration-wrapper .links a:hover { text-decoration:underline; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
     <img src="logo-new.png" alt="Logo">
     <h1>Register Student</h1>
 </div>
 
-<!-- Registration Form -->
 <div class="registration-wrapper">
     <h2>Student Information</h2>
     <form id="studentForm">
         <input type="text" id="studentName" placeholder="Full Name" required>
         <input type="email" id="studentEmail" placeholder="Email" required>
         <input type="text" id="studentID" placeholder="Student ID" required>
-        <input type="text" id="studentClass" placeholder="Class (e.g., 10-A)" required>
-        <input type="text" id="studentYear" placeholder="Year (e.g., Year 10)" required>
+        <input type="text" id="studentClass" placeholder="Class" required>
+        <input type="text" id="studentYear" placeholder="Year" required>
         <input type="password" id="password" placeholder="Password" required>
         <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <input type="file" id="studentPicture" accept="image/*">
         <button type="submit">Register Student</button>
     </form>
     <div class="links">
@@ -110,44 +46,44 @@
 </div>
 
 <script>
-// Fetch stored students or initialize
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// Handle form submission
-document.getElementById('studentForm').addEventListener('submit', function(e) {
+document.getElementById('studentForm').addEventListener('submit', function(e){
     e.preventDefault();
 
     const name = document.getElementById('studentName').value.trim();
-    const email = document.getElementById('studentEmail').value.trim().toLowerCase();
+    const email = document.getElementById('studentEmail').value.trim();
     const studentID = document.getElementById('studentID').value.trim();
     const studentClass = document.getElementById('studentClass').value.trim();
     const studentYear = document.getElementById('studentYear').value.trim();
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
+    const password = document.getElementById('password').value.trim();
+    const confirmPassword = document.getElementById('confirmPassword').value.trim();
+    const fileInput = document.getElementById('studentPicture');
 
-    // Password match check
     if(password !== confirmPassword){
         alert("Passwords do not match!");
         return;
     }
 
-    // Check for duplicate email
-    if(students.some(s => s.email === email)){
-        alert("This email is already registered!");
-        return;
+    let profilePicture = 'default-student.png';
+
+    if(fileInput.files.length > 0){
+        const reader = new FileReader();
+        reader.onload = function(e){
+            profilePicture = e.target.result;
+            saveStudent();
+        }
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        saveStudent();
     }
 
-    // Add new student
-    students.push({name, email, studentID, studentClass, studentYear, password});
-    localStorage.setItem('students', JSON.stringify(students));
-
-    // Update total students on admin dashboard
-    let totalStudents = parseInt(localStorage.getItem('totalStudents')) || 0;
-    totalStudents++;
-    localStorage.setItem('totalStudents', totalStudents);
-
-    alert("Student Registered Successfully!");
-    this.reset(); // Clear form
+    function saveStudent(){
+        students.push({name, email, studentID, studentClass, studentYear, password, profilePicture});
+        localStorage.setItem('students', JSON.stringify(students));
+        alert("Student Registered Successfully!");
+        document.getElementById('studentForm').reset();
+    }
 });
 </script>
 

@@ -30,48 +30,68 @@
 </div>
 
 <script>
-// ✅ Ensure at least 1 admin exists
+// Ensure localStorage arrays exist
 if(!localStorage.getItem('admins')){
     localStorage.setItem('admins', JSON.stringify([
         { email: "admin@adue.com", password: "12345678", name: "Admin", profilePicture: "admin.png" }
     ]));
 }
+if(!localStorage.getItem('teachers')) localStorage.setItem('teachers', JSON.stringify([]));
+if(!localStorage.getItem('students')) localStorage.setItem('students', JSON.stringify([]));
 
-// Load users from localStorage
-let admins = JSON.parse(localStorage.getItem('admins')) || [];
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let students = JSON.parse(localStorage.getItem('students')) || [];
+// Load users
+let admins = JSON.parse(localStorage.getItem('admins'));
+let teachers = JSON.parse(localStorage.getItem('teachers'));
+let students = JSON.parse(localStorage.getItem('students'));
 
+// Fix any old teacher or student missing passwords
+teachers = teachers.map(t => {
+    if(!t.password) t.password = prompt(`Set password for teacher ${t.name} (${t.teacherID})`);
+    return t;
+});
+students = students.map(s => {
+    if(!s.password) s.password = prompt(`Set password for student ${s.name} (${s.studentID})`);
+    return s;
+});
+
+// Save fixed passwords
+localStorage.setItem('teachers', JSON.stringify(teachers));
+localStorage.setItem('students', JSON.stringify(students));
+
+// Login form
 document.getElementById("loginForm").addEventListener("submit", function(e){
     e.preventDefault();
     const input = document.getElementById("userId").value.trim();
     const password = document.getElementById("password").value;
 
-    // Check Admin
-    let adminIndex = admins.findIndex(a => a.email === input && a.password === password);
-    if(adminIndex !== -1){
-        localStorage.setItem("currentAdminIndex", adminIndex);
-        window.location.href = "admin_dashboard.html";
-        return;
+    // Admin login
+    for(let i=0; i<admins.length; i++){
+        if(admins[i].email === input && admins[i].password === password){
+            localStorage.setItem("currentAdminIndex", i);
+            window.location.href = "admin_dashboard.html";
+            return;
+        }
     }
 
-    // Check Teacher
-    let teacherIndex = teachers.findIndex(t => (t.email === input || t.teacherID === input) && t.password === password);
-    if(teacherIndex !== -1){
-        localStorage.setItem("currentTeacherIndex", teacherIndex);
-        window.location.href = "teacher_dashboard.html";
-        return;
+    // Teacher login
+    for(let i=0; i<teachers.length; i++){
+        if((teachers[i].email === input || teachers[i].teacherID === input) && teachers[i].password === password){
+            localStorage.setItem("currentTeacherIndex", i);
+            window.location.href = "teacher_dashboard.html";
+            return;
+        }
     }
 
-    // Check Student
-    let studentIndex = students.findIndex(s => (s.email === input || s.studentID === input) && s.password === password);
-    if(studentIndex !== -1){
-        localStorage.setItem("currentStudentIndex", studentIndex);
-        window.location.href = "student_dashboard.html";
-        return;
+    // Student login
+    for(let i=0; i<students.length; i++){
+        if((students[i].email === input || students[i].studentID === input) && students[i].password === password){
+            localStorage.setItem("currentStudentIndex", i);
+            window.location.href = "student_dashboard.html";
+            return;
+        }
     }
 
-    // If none match
+    // Invalid login
     alert("Invalid login details!");
 });
 </script>

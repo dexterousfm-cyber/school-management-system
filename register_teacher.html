@@ -3,38 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <title>Register Teacher</title>
-<style>
-body { font-family: Arial; background:#f4f4f4; }
-.container {
-    max-width:400px;
-    margin:60px auto;
-    background:white;
-    padding:25px;
-    border-radius:10px;
-}
-input, button {
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-}
-button {
-    background:#722F37;
-    color:white;
-    border:none;
-}
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
 <div class="container">
     <h2>Register Teacher</h2>
-
     <form id="teacherForm">
         <input type="text" id="teacherName" placeholder="Name" required>
         <input type="email" id="teacherEmail" placeholder="Email" required>
         <input type="text" id="teacherID" placeholder="Teacher ID" required>
         <input type="text" id="department" placeholder="Department" required>
         <input type="password" id="password" placeholder="Password" required>
+        <input type="file" id="profilePictureInput" accept="image/*">
         <button type="submit">Register</button>
     </form>
 </div>
@@ -44,31 +24,26 @@ let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 
 document.getElementById("teacherForm").addEventListener("submit", function(e){
     e.preventDefault();
-
-    // ✅ CORRECT WAY TO GET VALUES
     const name = document.getElementById("teacherName").value;
     const email = document.getElementById("teacherEmail").value;
     const teacherID = document.getElementById("teacherID").value;
     const department = document.getElementById("department").value;
     const password = document.getElementById("password").value;
+    const fileInput = document.getElementById("profilePictureInput");
 
-    // ✅ PUSH CORRECT DATA
-    teachers.push({
-        name: name,
-        email: email,
-        teacherID: teacherID,
-        department: department,
-        password: password,
-        profilePicture: ""
-    });
+    if(fileInput.files.length>0){
+        const reader = new FileReader();
+        reader.onload = function(){ saveTeacher(reader.result); }
+        reader.readAsDataURL(fileInput.files[0]);
+    } else { saveTeacher(""); }
 
-    localStorage.setItem("teachers", JSON.stringify(teachers));
-
-    alert("Teacher Registered Successfully!");
-
-    document.getElementById("teacherForm").reset();
+    function saveTeacher(profilePicture){
+        teachers.push({ name, email, teacherID, department, password, profilePicture });
+        localStorage.setItem("teachers", JSON.stringify(teachers));
+        alert("Teacher Registered Successfully!");
+        document.getElementById("teacherForm").reset();
+    }
 });
 </script>
-
 </body>
 </html>

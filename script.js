@@ -1,28 +1,31 @@
-// script.js
+// Define login credentials
+const adminCredentials = {
+    email: "admin@adue.com",
+    password: "12345678"
+};
 
-// Real login credentials
-const users = [
-    { id: "admin@adue.com", password: "12345678", role: "admin" },
-    { id: "phemmyallen1@gmail.com", password: "12345678", role: "staff" }
-];
+const staffCredentials = {
+    email: "phemmyallen1@gmail.com",
+    password: "12345678"
+};
 
-document.getElementById("loginForm").addEventListener("submit", function(e) {
-    e.preventDefault();
+// Get login form
+const loginForm = document.getElementById("loginForm");
 
-    const userId = document.getElementById("userId").value.trim();
-    const password = document.getElementById("password").value.trim();
+loginForm.addEventListener("submit", function(e) {
+    e.preventDefault(); // prevent form refresh
+
+    const userId = document.getElementById("userId").value;
+    const password = document.getElementById("password").value;
 
     // Check credentials
-    const user = users.find(u => u.id === userId && u.password === password);
-
-    if(user) {
-        // Redirect based on role
-        if(user.role === "admin") {
-            window.location.href = "admin_dashboard.html";
-        } else if(user.role === "staff") {
-            window.location.href = "teacher_dashboard.html";
-        }
+    if(userId === adminCredentials.email && password === adminCredentials.password) {
+        alert("Admin login successful!");
+        window.location.href = "admin_dashboard.html"; // go to admin dashboard
+    } else if(userId === staffCredentials.email && password === staffCredentials.password) {
+        alert("Staff login successful!");
+        window.location.href = "teacher_dashboard.html"; // go to teacher dashboard
     } else {
-        alert("Invalid login credentials. Please try again.");
+        alert("Invalid login credentials!");
     }
 });

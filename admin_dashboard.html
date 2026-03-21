@@ -143,8 +143,19 @@ function editTeacher(i){ alert('Edit Teacher: '+teachers[i].name); }
 function editStudent(i){ alert('Edit Student: '+students[i].name); }
 
 // ---------------- LOGOUT ----------------
-function logout() {
-    window.location.href = 'index.html'; // replace 'index.html' with your actual login page
+<!-- Logout button in header -->
+<button id="logoutBtn">Logout</button>
+
+<script>
+// Robust Logout Function
+document.getElementById('logoutBtn').addEventListener('click', function() {
+    // Optional: clear session or local storage if you use it
+    // localStorage.clear();  // Uncomment if you want to clear all data on logout
+
+    // Force redirect to login page
+    window.location.assign('index.html'); // Replace 'index.html' with your actual login page name
+});
+</script>
 }
 
 // Teacher Form

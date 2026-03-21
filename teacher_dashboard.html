@@ -62,14 +62,71 @@ button.delete:hover { background:#a00000; }
     <button class="delete" onclick="deleteRecord()">Delete</button>
   </div>
 </div>
-
 <script>
 // ---------- LOAD DATA ----------
 let students = JSON.parse(localStorage.getItem('students')) || [];
+let currentTeacherIndex = localStorage.getItem('currentTeacherIndex');
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let currentTeacherIndex = parseInt(localStorage.getItem('currentTeacherIndex')) || 0;
-let currentTeacher = teachers[currentTeacherIndex] || {name:'Teacher'};
-document.getElementById('teacherName').innerText = `Welcome ${currentTeacher.name}`;
+
+// ---------- SHOW STUDENTS ----------
+function renderStudentsTable() {
+    students = JSON.parse(localStorage.getItem('students')) || [];
+    let html = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th>
+    </tr>`;
+    students.forEach((s, i) => {
+        html += `<tr>
+            <td>${s.profilePicture || ''}</td>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td>${s.studentID}</td>
+            <td>${s.studentClass || ''}</td>
+            <td>${s.studentYear || ''}</td>
+            <td><button onclick="editStudent(${i})">Edit</button></td>
+        </tr>`;
+    });
+    document.getElementById('table').innerHTML = html;
+}
+
+// ---------- REGISTER STUDENT ----------
+function registerStudent() {
+    let name = prompt("Name:");
+    let email = prompt("Email:");
+    let studentID = prompt("Student ID:");
+    let studentClass = prompt("Class:");
+    let studentYear = prompt("Year:");
+    let password = prompt("Password:");
+
+    students = JSON.parse(localStorage.getItem('students')) || [];
+    students.push({name, email, studentID, studentClass, studentYear, password});
+    localStorage.setItem('students', JSON.stringify(students));
+
+    renderStudentsTable();
+}
+
+// ---------- EDIT STUDENT ----------
+function editStudent(i) {
+    students = JSON.parse(localStorage.getItem('students')) || [];
+    let s = students[i];
+
+    let name = prompt("Name:", s.name);
+    let email = prompt("Email:", s.email);
+    let studentID = prompt("Student ID:", s.studentID);
+    let studentClass = prompt("Class:", s.studentClass);
+    let studentYear = prompt("Year:", s.studentYear);
+    let password = prompt("Password:", s.password);
+
+    students[i] = {name, email, studentID, studentClass, studentYear, password};
+    localStorage.setItem('students', JSON.stringify(students));
+    renderStudentsTable();
+}
+
+// ---------- LOGOUT ----------
+function logout() { window.location.href = 'index.html'; }
+
+// ---------- INITIAL LOAD ----------
+renderStudentsTable();
+</script>.name}`;
 
 let editIndex = null;
 

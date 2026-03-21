@@ -5,12 +5,12 @@
 <title>Register Teacher</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-body { font-family: Arial, sans-serif; margin:0; padding:0; background:#f9f9f9; }
+body { font-family: Arial, sans-serif; background:#f9f9f9; margin:0; padding:0; }
 .header { background:#800000; color:white; padding:15px; display:flex; align-items:center; }
 .header img { width:60px; margin-right:15px; }
 .container { max-width:500px; margin:30px auto; background:white; padding:25px; border-radius:10px; box-shadow:0 4px 10px rgba(0,0,0,0.2); }
 h2 { text-align:center; color:#800000; margin-bottom:20px; }
-form input, form select { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
+form input { width:100%; padding:10px; margin:8px 0; border:1px solid #ccc; border-radius:5px; }
 form input[type="file"] { padding:5px; }
 button { width:100%; padding:12px; background:#800000; color:white; border:none; border-radius:5px; font-size:16px; cursor:pointer; margin-top:10px; }
 button:hover { background:#a00000; }
@@ -43,49 +43,49 @@ button:hover { background:#a00000; }
 </div>
 
 <script>
+// Load existing teachers
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 
-const profileInput = document.getElementById("profilePictureInput");
-const profilePreview = document.getElementById("profilePreview");
+const form = document.getElementById('teacherForm');
+const profileInput = document.getElementById('profilePictureInput');
+const profilePreview = document.getElementById('profilePreview');
 
-// Preview image when selected
-profileInput.addEventListener("change", function(){
-    if(this.files.length>0){
+// Preview image
+profileInput.addEventListener('change', function(){
+    if(this.files.length > 0){
         const reader = new FileReader();
-        reader.onload = function(){
-            profilePreview.src = reader.result;
-        }
+        reader.onload = function(){ profilePreview.src = reader.result; }
         reader.readAsDataURL(this.files[0]);
     } else {
-        profilePreview.src = "default.png";
+        profilePreview.src = 'default.png';
     }
 });
 
-document.getElementById("teacherForm").addEventListener("submit", function(e){
-    e.preventDefault();
+// Submit form
+form.addEventListener('submit', function(e){
+    e.preventDefault(); // prevent page reload
 
-    const name = document.getElementById("teacherName").value.trim();
-    const email = document.getElementById("teacherEmail").value.trim();
-    const teacherID = document.getElementById("teacherID").value.trim();
-    const department = document.getElementById("department").value.trim();
-    const password = document.getElementById("password").value;
+    const name = document.getElementById('teacherName').value.trim();
+    const email = document.getElementById('teacherEmail').value.trim();
+    const teacherID = document.getElementById('teacherID').value.trim();
+    const department = document.getElementById('department').value.trim();
+    const password = document.getElementById('password').value;
 
     function saveTeacher(profilePicture){
         teachers.push({ name, email, teacherID, department, password, profilePicture });
-        localStorage.setItem("teachers", JSON.stringify(teachers));
-        alert("Teacher Registered Successfully!");
-        document.getElementById("teacherForm").reset();
-        profilePreview.src = "default.png";
+        localStorage.setItem('teachers', JSON.stringify(teachers));
+        alert('Teacher Registered Successfully!');
+        form.reset();
+        profilePreview.src = 'default.png';
     }
 
-    if(profileInput.files.length>0){
+    // Handle profile picture
+    if(profileInput.files.length > 0){
         const reader = new FileReader();
-        reader.onload = function(){
-            saveTeacher(reader.result);
-        }
+        reader.onload = function(){ saveTeacher(reader.result); }
         reader.readAsDataURL(profileInput.files[0]);
     } else {
-        saveTeacher("default.png");
+        saveTeacher('default.png');
     }
 });
 </script>

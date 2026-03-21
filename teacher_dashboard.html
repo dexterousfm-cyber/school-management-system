@@ -5,7 +5,7 @@
 <title>Teacher Dashboard</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-/* Wine theme, clean design */
+/* Wine theme and clean design */
 body { font-family: Arial, sans-serif; background:#f5f5f5; margin:0; }
 .header { display:flex; justify-content:space-between; align-items:center; background:#800000; color:white; padding:15px 30px; }
 .header .logo img { width:120px; }
@@ -40,9 +40,8 @@ table tr:hover { background:#fff2f2; }
 
 <script>
 // ---------- LOAD DATA ----------
-let students = JSON.parse(localStorage.getItem('students')) || [];
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 let currentTeacherIndex = localStorage.getItem('currentTeacherIndex');
+let students = JSON.parse(localStorage.getItem('students')) || [];
 
 // ---------- RENDER STUDENTS ----------
 function renderStudentsTable() {

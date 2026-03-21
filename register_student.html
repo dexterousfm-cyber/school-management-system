@@ -1,27 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register Student</title>
+<style>
+body { font-family: Arial; background:#f4f4f4; }
+.container {
+    max-width:400px;
+    margin:60px auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+}
+input, button {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+button {
+    background:#722F37;
+    color:white;
+    border:none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Register Student</h2>
+
+    <form id="studentForm">
+        <input type="text" id="studentName" placeholder="Name" required>
+        <input type="email" id="studentEmail" placeholder="Email" required>
+        <input type="text" id="studentID" placeholder="Student ID" required>
+        <input type="text" id="studentClass" placeholder="Class" required>
+        <input type="text" id="studentYear" placeholder="Year" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+<script>
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
-document.getElementById('studentForm').addEventListener('submit', function(e){
+document.getElementById("studentForm").addEventListener("submit", function(e){
     e.preventDefault();
 
-    const name = studentName.value;
-    const email = studentEmail.value;
-    const studentID = studentID.value;
-    const studentClass = studentClass.value;
-    const studentYear = studentYear.value;
-    const password = password.value;
+    // ✅ GET VALUES CORRECTLY
+    const name = document.getElementById("studentName").value;
+    const email = document.getElementById("studentEmail").value;
+    const studentID = document.getElementById("studentID").value;
+    const studentClass = document.getElementById("studentClass").value;
+    const studentYear = document.getElementById("studentYear").value;
+    const password = document.getElementById("password").value;
 
+    // ✅ SAVE DATA
     students.push({
-        name,
-        email,
-        studentID,
-        studentClass,
-        studentYear,
-        password,
-        result: '',
-        profilePicture: ''
+        name: name,
+        email: email,
+        studentID: studentID,
+        studentClass: studentClass,
+        studentYear: studentYear,
+        password: password,
+        result: "",
+        profilePicture: ""
     });
 
-    localStorage.setItem('students', JSON.stringify(students));
+    localStorage.setItem("students", JSON.stringify(students));
 
-    alert("Student Registered!");
+    alert("Student Registered Successfully!");
+
+    document.getElementById("studentForm").reset();
 });
+</script>
+
+</body>
+</html>

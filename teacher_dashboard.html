@@ -76,7 +76,7 @@ let editIndex = null;
 // ---------- STUDENT FUNCTIONS ----------
 function renderStudentsTable() {
     // ALWAYS fetch latest students from localStorage
-    students = JSON.parse(localStorage.getItem('students')) || []; 
+    students = JSON.parse(localStorage.getItem('students')) || [];
 
     const table = document.getElementById('studentsTable');
     let html = `<tr>

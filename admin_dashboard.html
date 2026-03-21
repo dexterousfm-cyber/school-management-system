@@ -3,32 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
-<style>
-body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
-.header { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#800000; color:white; }
-.header .logo img { width:120px; }
-.header .profile { display:flex; align-items:center; gap:10px; }
-.header .profile span { font-weight:bold; }
-.container { padding:30px; }
-button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-button.primary { background:#800000; color:white; }
-button.primary:hover { background:#a00000; }
-table { width:100%; border-collapse:collapse; margin-top:20px; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.15); }
-th, td { padding:12px; text-align:center; border:1px solid #ddd; }
-th { background:#800000; color:white; }
-table tr:hover { background:#fff2f2; }
-
-/* Modal styling */
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:white; padding:20px; border-radius:10px; width:300px; }
-.modal-content h3 { margin-top:0; color:#800000; }
-.modal-content input { width:100%; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
-.modal-content button { width:100%; margin-top:10px; }
-button.cancel { background:#ccc; color:black; }
-button.cancel:hover { background:#999; }
-button.delete { background:#800000; color:white; margin-top:5px; }
-button.delete:hover { background:#a00000; }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -41,9 +16,9 @@ button.delete:hover { background:#a00000; }
 </div>
 
 <div class="container">
-    <button class="primary" onclick="openTeacherForm()">Register Teacher</button>
+    <button class="primary" onclick="registerTeacher()">Register Teacher</button>
+    <button class="primary" onclick="registerStudent()">Register Student</button>
     <button class="primary" onclick="renderTeachersTable()">Show Teachers</button>
-    <button class="primary" onclick="openStudentForm()">Register Student</button>
     <button class="primary" onclick="renderStudentsTable()">Show Students</button>
 
     <table id="table"></table>
@@ -56,7 +31,8 @@ button.delete:hover { background:#a00000; }
     <input type="text" id="modalName" placeholder="Name">
     <input type="text" id="modalEmail" placeholder="Email">
     <input type="text" id="modalID" placeholder="ID">
-    <input type="text" id="modalExtra" placeholder="Department/Class">
+    <input type="text" id="modalDeptOrClass" placeholder="Department/Class">
+    <input type="text" id="modalYear" placeholder="Year">
     <input type="password" id="modalPassword" placeholder="Password">
     <button onclick="saveRecord()">Save</button>
     <button class="cancel" onclick="closeModal()">Cancel</button>
@@ -65,20 +41,16 @@ button.delete:hover { background:#a00000; }
 </div>
 
 <script>
-// Load data from localStorage
-let admins = JSON.parse(localStorage.getItem('admins')) || [];
+// ---------- LOAD DATA ----------
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 let students = JSON.parse(localStorage.getItem('students')) || [];
 let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
-let currentAdmin = admins[currentAdminIndex];
-document.getElementById('adminName').innerText = `Welcome ${currentAdmin.name}`;
-
 let editIndex = null;
-let editType = ''; // 'teacher' or 'student'
+document.getElementById('adminName').innerText = `Welcome Admin`;
 
 // ---------- TEACHER FUNCTIONS ----------
 function renderTeachersTable() {
-    const table = document.getElementById('table');
+    teachers = JSON.parse(localStorage.getItem('teachers')) || [];
     let html = `<tr><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th></tr>`;
     teachers.forEach((t,i)=>{
         html += `<tr>
@@ -89,24 +61,12 @@ function renderTeachersTable() {
             <td><button onclick="openModal(${i},'teacher')">Edit/Delete</button></td>
         </tr>`;
     });
-    table.innerHTML = html;
-}
-
-function openTeacherForm() {
-    let name = prompt("Name:");
-    let email = prompt("Email:");
-    let id = prompt("Teacher ID:");
-    let department = prompt("Department:");
-    let password = prompt("Password:");
-
-    teachers.push({name,email,teacherID:id,department,password});
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-    renderTeachersTable();
+    document.getElementById('table').innerHTML = html;
 }
 
 // ---------- STUDENT FUNCTIONS ----------
 function renderStudentsTable() {
-    const table = document.getElementById('table');
+    students = JSON.parse(localStorage.getItem('students')) || [];
     let html = `<tr><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th></tr>`;
     students.forEach((s,i)=>{
         html += `<tr>
@@ -118,62 +78,86 @@ function renderStudentsTable() {
             <td><button onclick="openModal(${i},'student')">Edit/Delete</button></td>
         </tr>`;
     });
-    table.innerHTML = html;
+    document.getElementById('table').innerHTML = html;
 }
 
-function openStudentForm() {
+// ---------- REGISTER ----------
+function registerTeacher() {
+    let name = prompt("Teacher Name:");
+    let email = prompt("Email:");
+    let teacherID = prompt("Teacher ID:");
+    let department = prompt("Department:");
+    let password = prompt("Password:");
+
+    teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+    teachers.push({name,email,teacherID,department,password});
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+    renderTeachersTable();
+}
+
+function registerStudent() {
     let name = prompt("Student Name:");
     let email = prompt("Email:");
-    let id = prompt("Student ID:");
+    let studentID = prompt("Student ID:");
     let studentClass = prompt("Class:");
     let studentYear = prompt("Year:");
     let password = prompt("Password:");
 
-    students.push({name,email,studentID:id,studentClass,studentYear,password});
+    students = JSON.parse(localStorage.getItem('students')) || [];
+    students.push({name,email,studentID,studentClass,studentYear,password});
     localStorage.setItem('students', JSON.stringify(students));
     renderStudentsTable();
 }
 
-// ---------- MODAL FUNCTIONS ----------
-function openModal(i,type) {
+// ---------- MODAL ----------
+let modalType = '';
+function openModal(i,type){
     editIndex = i;
-    editType = type;
-    const record = type==='teacher'? teachers[i] : students[i];
-    document.getElementById('modalName').value = record.name;
-    document.getElementById('modalEmail').value = record.email;
-    document.getElementById('modalID').value = type==='teacher'? record.teacherID : record.studentID;
-    document.getElementById('modalExtra').value = type==='teacher'? record.department || '' : record.studentClass || '';
-    document.getElementById('modalPassword').value = record.password;
-    document.getElementById('modal').style.display = 'flex';
+    modalType = type;
+    const obj = type==='teacher'? teachers[i] : students[i];
+    document.getElementById('modalName').value = obj.name;
+    document.getElementById('modalEmail').value = obj.email;
+    document.getElementById('modalID').value = type==='teacher'? obj.teacherID : obj.studentID;
+    document.getElementById('modalDeptOrClass').value = type==='teacher'? obj.department || '' : obj.studentClass || '';
+    document.getElementById('modalYear').value = type==='teacher'? '' : obj.studentYear || '';
+    document.getElementById('modalPassword').value = obj.password;
+    document.getElementById('modal').style.display='flex';
 }
 
 function closeModal(){ document.getElementById('modal').style.display='none'; }
 
-function saveRecord() {
-    const record = editType==='teacher'? teachers[editIndex] : students[editIndex];
-    record.name = document.getElementById('modalName').value;
-    record.email = document.getElementById('modalEmail').value;
-    if(editType==='teacher') record.teacherID = document.getElementById('modalID').value;
-    else { record.studentID = document.getElementById('modalID').value; record.studentClass = document.getElementById('modalExtra').value; }
-    record.password = document.getElementById('modalPassword').value;
+function saveRecord(){
+    let obj = modalType==='teacher'? teachers[editIndex] : students[editIndex];
+    obj.name = document.getElementById('modalName').value;
+    obj.email = document.getElementById('modalEmail').value;
+    if(modalType==='teacher') obj.teacherID = document.getElementById('modalID').value;
+    else obj.studentID = document.getElementById('modalID').value;
+    if(modalType==='teacher') obj.department = document.getElementById('modalDeptOrClass').value;
+    else obj.studentClass = document.getElementById('modalDeptOrClass').value;
+    if(modalType==='student') obj.studentYear = document.getElementById('modalYear').value;
+    obj.password = document.getElementById('modalPassword').value;
 
-    if(editType==='teacher') localStorage.setItem('teachers', JSON.stringify(teachers));
+    if(modalType==='teacher') localStorage.setItem('teachers', JSON.stringify(teachers));
     else localStorage.setItem('students', JSON.stringify(students));
-
     closeModal();
-    editType==='teacher'? renderTeachersTable() : renderStudentsTable();
+    modalType==='teacher'? renderTeachersTable() : renderStudentsTable();
 }
 
-function deleteRecord() {
-    if(confirm("Are you sure you want to delete?")){
-        if(editType==='teacher') { teachers.splice(editIndex,1); localStorage.setItem('teachers', JSON.stringify(teachers)); renderTeachersTable();}
-        else { students.splice(editIndex,1); localStorage.setItem('students', JSON.stringify(students)); renderStudentsTable();}
+function deleteRecord(){
+    if(confirm("Are you sure?")){
+        if(modalType==='teacher') teachers.splice(editIndex,1);
+        else students.splice(editIndex,1);
+        localStorage.setItem(modalType==='teacher'?'teachers':'students', modalType==='teacher'? JSON.stringify(teachers): JSON.stringify(students));
         closeModal();
+        modalType==='teacher'? renderTeachersTable() : renderStudentsTable();
     }
 }
 
-// Logout
+// ---------- LOGOUT ----------
 function logout(){ window.location.href='index.html'; }
+
+// ---------- INITIAL LOAD ----------
+renderTeachersTable();
 </script>
 </body>
 </html>

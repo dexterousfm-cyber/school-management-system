@@ -4,10 +4,11 @@
 <meta charset="UTF-8">
 <title>Register Student - ADUE Portal</title>
 <link rel="stylesheet" href="styles.css">
+
 <style>
 /* Header styling */
 .header {
-    background-color: #722F37; /* wine color */
+    background-color: #722F37;
     padding: 20px;
     text-align: center;
     color: white;
@@ -20,7 +21,6 @@
 .header h1 {
     display: inline;
     font-size: 24px;
-    vertical-align: middle;
 }
 
 /* Form wrapper */
@@ -36,7 +36,7 @@
 /* Form styling */
 .registration-wrapper h2 {
     text-align: center;
-    color: #722F37; /* wine heading */
+    color: #722F37;
     margin-bottom: 25px;
 }
 .registration-wrapper input {
@@ -52,7 +52,7 @@
     outline: none;
 }
 
-/* Submit button */
+/* Button */
 .registration-wrapper button {
     width: 100%;
     padding: 14px;
@@ -68,7 +68,7 @@
     opacity: 0.9;
 }
 
-/* Optional links */
+/* Links */
 .registration-wrapper .links {
     text-align: center;
     margin-top: 20px;
@@ -83,67 +83,67 @@
 }
 </style>
 </head>
+
 <body>
 
-<!-- Header -->
+<!-- HEADER -->
 <div class="header">
     <img src="logo-new.png" alt="Logo">
     <h1>Register Student</h1>
 </div>
 
-<!-- Registration Form -->
+<!-- FORM -->
 <div class="registration-wrapper">
     <h2>Student Information</h2>
+
     <form id="studentForm">
         <input type="text" id="studentName" placeholder="Full Name" required>
         <input type="email" id="studentEmail" placeholder="Email" required>
         <input type="text" id="studentID" placeholder="Student ID" required>
-        <input type="text" id="studentYear" placeholder="Year (e.g., Year 10)" required>
-        <input type="text" id="studentClass" placeholder="Class (e.g., 10-A)" required>
-        <input type="password" id="studentPassword" placeholder="Password" required>
-        <input type="password" id="confirmStudentPassword" placeholder="Confirm Password" required>
+        <input type="text" id="className" placeholder="Class (e.g., JSS1)" required>
+
+        <input type="password" id="password" placeholder="Password" required>
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+
         <button type="submit">Register Student</button>
     </form>
+
     <div class="links">
         <a href="admin_dashboard.html">Back to Dashboard</a>
     </div>
 </div>
 
+<!-- SCRIPT -->
 <script>
-// Fetch stored students or initialize
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// Handle form submission
 document.getElementById('studentForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // Collect student data
-    const name = document.getElementById('studentName').value;
-    const email = document.getElementById('studentEmail').value;
+    const studentName = document.getElementById('studentName').value;
+    const studentEmail = document.getElementById('studentEmail').value;
     const studentID = document.getElementById('studentID').value;
-    const year = document.getElementById('studentYear').value;
-    const studentClass = document.getElementById('studentClass').value;
-    const password = document.getElementById('studentPassword').value;
-    const confirmPassword = document.getElementById('confirmStudentPassword').value;
+    const className = document.getElementById('className').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
 
-    if(password !== confirmPassword){
+    if (password !== confirmPassword) {
         alert("Passwords do not match!");
         return;
     }
 
-    // Add new student to array
-    students.push({name, email, studentID, year, studentClass, password});
+    students.push({
+        name: studentName,
+        email: studentEmail,
+        studentID: studentID,
+        className: className,
+        password: password
+    });
 
-    // Save to localStorage
     localStorage.setItem('students', JSON.stringify(students));
 
-    // Update total students on admin dashboard
-    let totalStudents = parseInt(localStorage.getItem('totalStudents')) || 0;
-    totalStudents++;
-    localStorage.setItem('totalStudents', totalStudents);
-
     alert("Student Registered Successfully!");
-    this.reset(); // Clear form
+    this.reset();
 });
 </script>
 

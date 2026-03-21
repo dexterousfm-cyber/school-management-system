@@ -86,24 +86,28 @@ table tr:hover { background:#fff2f2; }
 </div>
 
 <script>
-// Logout button (works reliably)
+// Ensure DOM fully loaded
 window.onload = function() {
-    document.getElementById('logoutBtn').addEventListener('click', function() {
+    const logoutBtn = document.getElementById('logoutBtn');
+    logoutBtn.addEventListener('click', function() {
         localStorage.removeItem('currentAdminIndex');
         localStorage.removeItem('currentTeacherIndex');
         localStorage.removeItem('currentStudentIndex');
         window.location.href = 'index.html';
     });
 
-    // Load Admin Profile
+    // Admin profile
     let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
     let admins = JSON.parse(localStorage.getItem('admins')) || [{name:'Admin', profilePicture:'admin.png'}];
     document.getElementById('headerName').innerText = 'Welcome ' + admins[currentAdminIndex].name;
     document.getElementById('headerAvatar').src = admins[currentAdminIndex].profilePicture;
 
+    // Tables
+    const teachersTable = document.getElementById('teachersTable');
+    const studentsTable = document.getElementById('studentsTable');
+
     // Load Teachers
     let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-    let teachersTable = document.getElementById('teachersTable');
     teachersTable.innerHTML = `<tr>
         <th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th>
     </tr>`;
@@ -111,6 +115,58 @@ window.onload = function() {
         let row = teachersTable.insertRow();
         row.insertCell(0).innerHTML = `<img src="${t.profilePicture}" class="avatar-small">`;
         row.insertCell(1).innerText = t.name;
+        row.insertCell(2).innerText = t.email;
+        row.insertCell(3).innerText = t.teacherID;
+        row.insertCell(4).innerText = t.department;
+        row.insertCell(5).innerHTML = `<button class="action-btn" onclick="editTeacher(${i})">Edit</button>`;
+    });
+
+    // Load Students
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+    studentsTable.innerHTML = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th>
+    </tr>`;
+    students.forEach((s,i)=>{
+        let row = studentsTable.insertRow();
+        row.insertCell(0).innerHTML = `<img src="${s.profilePicture}" class="avatar-small">`;
+        row.insertCell(1).innerText = s.name;
+        row.insertCell(2).innerText = s.email;
+        row.insertCell(3).innerText = s.studentID;
+        row.insertCell(4).innerText = s.studentClass;
+        row.insertCell(5).innerText = s.studentYear;
+        row.insertCell(6).innerHTML = `<button class="action-btn" onclick="editStudent(${i})">Edit</button>`;
+    });
+
+    // Default table visible
+    showTable('teachers');
+};
+
+// Edit functions
+function editTeacher(i){
+    localStorage.setItem('editTeacherIndex', i);
+    window.location.href='edit_teacher.html';
+}
+function editStudent(i){
+    localStorage.setItem('editStudentIndex', i);
+    window.location.href='edit_student.html';
+}
+
+// Toggle tables
+function showTable(table) {
+    const teachersTable = document.getElementById('teachersTable');
+    const studentsTable = document.getElementById('studentsTable');
+    if(table==='teachers'){
+        teachersTable.style.display = '';
+        studentsTable.style.display = 'none';
+    } else {
+        teachersTable.style.display = 'none';
+        studentsTable.style.display = '';
+    }
+}
+</script>
+
+</body>
+</html>        row.insertCell(1).innerText = t.name;
         row.insertCell(2).innerText = t.email;
         row.insertCell(3).innerText = t.teacherID;
         row.insertCell(4).innerText = t.department;

@@ -7,53 +7,98 @@
 </head>
 <body>
 
-<div class="container">
-  <h2>Register Teacher</h2>
-  <form id="teacherForm">
-    <input type="text" id="teacherName" placeholder="Full Name" required>
-    <input type="email" id="teacherEmail" placeholder="Email" required>
-    <input type="text" id="teacherID" placeholder="Teacher ID" required>
-    <input type="password" id="teacherPassword" placeholder="Password" required>
-    <input type="file" id="teacherPic">
-    <button type="submit">Register Teacher</button>
-  </form>
+<div class="header">
+    <div class="logo"><img src="logo-new.png" alt="Logo"></div>
+    <div class="profile">
+        <img src="admin.png" alt="Admin">
+        <span>Welcome Admin</span>
+        <button onclick="logout()">Logout</button>
+    </div>
 </div>
 
+<div class="container">
+    <h2>Register Teacher</h2>
+    <div class="form-container">
+        <input type="text" id="teacherName" placeholder="Name">
+        <input type="email" id="teacherEmail" placeholder="Email">
+        <input type="text" id="teacherID" placeholder="Teacher ID">
+        <input type="text" id="teacherDept" placeholder="Department">
+        <input type="password" id="teacherPassword" placeholder="Password">
+        <input type="file" id="teacherPic">
+        <button onclick="registerTeacher()">Register Teacher</button>
+    </div>
+
+    <h3>All Teachers</h3>
+    <table id="teachersTable"></table>
+</div>
+
+<script src="script.js"></script>
 <script>
-document.getElementById("teacherForm").addEventListener("submit", function(e){
-    e.preventDefault();
+// Render teacher table
+function renderTeachersTable(){
+    const table = document.getElementById('teachersTable');
+    let html = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Password</th><th>Edit</th><th>Delete</th>
+    </tr>`;
+    teachers.forEach((t,i)=>{
+        html += `<tr>
+            <td><img src="${t.profilePicture}" style="width:50px;height:50px;border-radius:50%;"></td>
+            <td>${t.name}</td>
+            <td>${t.email}</td>
+            <td>${t.teacherID}</td>
+            <td>${t.department}</td>
+            <td>•••••••</td>
+            <td><button onclick="editTeacherPrompt(${i})">Edit</button></td>
+            <td><button onclick="deleteTeacher(${i}); renderTeachersTable();">Delete</button></td>
+        </tr>`;
+    });
+    table.innerHTML = html;
+}
 
-    let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-    
-    let name = document.getElementById("teacherName").value;
-    let email = document.getElementById("teacherEmail").value;
-    let teacherID = document.getElementById("teacherID").value;
-    let password = document.getElementById("teacherPassword").value;
-    let file = document.getElementById("teacherPic").files[0];
+// Register teacher
+function registerTeacher(){
+    let name = document.getElementById('teacherName').value;
+    let email = document.getElementById('teacherEmail').value;
+    let id = document.getElementById('teacherID').value;
+    let dept = document.getElementById('teacherDept').value;
+    let password = document.getElementById('teacherPassword').value;
+    let file = document.getElementById('teacherPic').files[0];
 
-    if (!name || !email || !teacherID || !password) {
-        alert("All fields are required!");
-        return;
-    }
+    if(!name || !email || !password){ alert("Name, Email, and Password are required"); return; }
 
-    function saveTeacher(pic){
-        teachers.push({name,email,teacherID,password,profilePicture: pic || "teacher.png"});
-        localStorage.setItem('teachers', JSON.stringify(teachers));
+    let reader = new FileReader();
+    reader.onload = function(e){
+        let pic = e.target.result;
+        registerTeacherAdmin(name,email,id,dept,password,pic);
+        renderTeachersTable();
         alert("Teacher registered successfully!");
-        document.getElementById("teacherForm").reset();
     }
+    if(file) reader.readAsDataURL(file);
+    else{
+        registerTeacherAdmin(name,email,id,dept,password);
+        renderTeachersTable();
+        alert("Teacher registered successfully!");
+    }
+}
 
-    if(file){
-        let reader = new FileReader();
-        reader.onload = function(e){
-            saveTeacher(e.target.result);
-        }
-        reader.readAsDataURL(file);
-    } else {
-        saveTeacher();
-    }
-});
+// Edit teacher prompt
+function editTeacherPrompt(i){
+    let t = teachers[i];
+    let newName = prompt("Name:", t.name) || t.name;
+    let newEmail = prompt("Email:", t.email) || t.email;
+    let newDept = prompt("Department:", t.department) || t.department;
+    let newPassword = prompt("Password (leave blank to keep hidden):","");
+    editTeacher(i,{
+        name: newName,
+        email: newEmail,
+        department: newDept,
+        password: newPassword || t.password
+    });
+    renderTeachersTable();
+}
+
+// Initial render
+renderTeachersTable();
 </script>
-
 </body>
 </html>

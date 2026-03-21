@@ -9,7 +9,6 @@
 .header img { width:150px; height:150px; border-radius:50%; border:3px solid white; margin-right:20px; }
 .logout-btn { background-color:white; color:#722F37; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; }
 .logout-btn:hover { opacity:0.9; }
-#welcome { text-align:center; margin:20px; color:#722F37; font-size:20px; }
 table { width:100%; border-collapse:collapse; margin-top:20px; }
 th, td { border:1px solid #ccc; padding:10px; text-align:center; }
 th { background:#eee; }
@@ -32,40 +31,62 @@ img { border-radius:50%; }
 <h2>Your Students</h2>
 <table border="1" width="100%" id="teacherStudentsTable">
 <thead>
-<tr><th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th></tr>
+<tr>
+<th>Student Picture</th>
+<th>Student Name</th>
+<th>Student Email</th>
+<th>Student ID</th>
+<th>Class</th>
+<th>Year</th>
+<th>Teacher Picture</th>
+<th>Teacher Name</th>
+</tr>
 </thead>
 <tbody></tbody>
 </table>
 
 <script>
-// Get the currently logged-in teacher from localStorage
+// --- Get the currently logged-in teacher ---
 let currentTeacherEmail = localStorage.getItem('currentTeacherEmail');
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let teacher = teachers.find(t => t.email === currentTeacherEmail);
-
-// Display teacher name and picture
-if(teacher){
-    document.getElementById('teacherNameDisplay').innerText = teacher.name;
-    document.getElementById('teacherEmailDisplay').innerText = teacher.email;
-    document.getElementById('teacherLogo').src = teacher.profilePicture || 'default-teacher.png';
-} else {
-    document.getElementById('teacherNameDisplay').innerText = 'Unknown';
+if(!currentTeacherEmail){
+    alert("You are not logged in!");
+    window.location.href = "index.html";
 }
 
-// Display all students in table
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 let students = JSON.parse(localStorage.getItem('students')) || [];
+
+// --- Find the teacher object ---
+let teacher = teachers.find(t => t.email === currentTeacherEmail);
+if(!teacher){
+    alert("Teacher not found!");
+    window.location.href = "index.html";
+}
+
+// --- Display teacher info ---
+document.getElementById('teacherNameDisplay').innerText = teacher.name;
+document.getElementById('teacherEmailDisplay').innerText = teacher.email;
+document.getElementById('teacherLogo').src = teacher.profilePicture || 'default-teacher.png';
+
+// --- Populate students table ---
 let tbody = document.querySelector('#teacherStudentsTable tbody');
+tbody.innerHTML = '';
+
 students.forEach(s => {
-    tbody.innerHTML += `<tr>
+    tbody.innerHTML += `
+    <tr>
         <td><img src="${s.profilePicture || 'default-student.png'}" width="70" height="70"></td>
         <td>${s.name}</td>
         <td>${s.email}</td>
         <td>${s.studentID}</td>
         <td>${s.studentClass}</td>
         <td>${s.studentYear}</td>
+        <td><img src="${teacher.profilePicture || 'default-teacher.png'}" width="70" height="70"></td>
+        <td>${teacher.name}</td>
     </tr>`;
 });
 
+// --- Logout function ---
 function logout(){
     localStorage.removeItem('currentTeacherEmail');
     window.location.href = "index.html";

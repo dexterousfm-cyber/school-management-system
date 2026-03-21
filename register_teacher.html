@@ -20,32 +20,35 @@
         <input type="text" id="teacherID" placeholder="Teacher ID" required>
         <input type="text" id="department" placeholder="Department" required>
         <input type="password" id="password" placeholder="Password" required>
-        <input type="file" id="profilePicture">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <input type="text" id="teacherPicture" placeholder="Picture URL (optional)">
         <button type="submit">Register Teacher</button>
     </form>
-    <div class="links"><a href="admin_dashboard.html">Back to Dashboard</a></div>
+    <div class="links">
+        <a href="admin_dashboard.html">Back to Dashboard</a>
+    </div>
 </div>
 
 <script>
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 document.getElementById('teacherForm').addEventListener('submit', function(e){
     e.preventDefault();
-    const name=document.getElementById('teacherName').value;
-    const email=document.getElementById('teacherEmail').value;
-    const teacherID=document.getElementById('teacherID').value;
-    const department=document.getElementById('department').value;
-    const password=document.getElementById('password').value;
-    const file=document.getElementById('profilePicture').files[0];
-    let reader=new FileReader();
-    reader.onload = function(){
-        teachers.push({name,email,teacherID,department,password,profilePicture: reader.result});
-        localStorage.setItem('teachers', JSON.stringify(teachers));
-        alert("Teacher registered!");
-        window.location.href='admin_dashboard.html';
-    };
-    if(file) reader.readAsDataURL(file);
-    else {teachers.push({name,email,teacherID,department,password,profilePicture:null}); localStorage.setItem('teachers',JSON.stringify(teachers)); alert("Teacher registered!"); window.location.href='admin_dashboard.html';}
+    const name = document.getElementById('teacherName').value;
+    const email = document.getElementById('teacherEmail').value;
+    const teacherID = document.getElementById('teacherID').value;
+    const department = document.getElementById('department').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const profilePicture = document.getElementById('teacherPicture').value;
+
+    if(password !== confirmPassword){ alert("Passwords do not match!"); return; }
+
+    teachers.push({name,email,teacherID,department,password,profilePicture});
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+    alert("Teacher registered successfully!");
+    this.reset();
 });
 </script>
+
 </body>
 </html>

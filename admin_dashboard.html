@@ -9,6 +9,36 @@
 .dashboard-header {
     color: white; /* ADUE Admin Dashboard text in white */
 }
+.stat-card {
+    background: #fff;
+    padding: 20px;
+    margin: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+}
+.dashboard-stats {
+    display: flex;
+    justify-content: space-around;
+    margin: 20px 0;
+}
+.dashboard-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 30px;
+}
+button {
+    padding: 10px 20px;
+    background-color: #722F37; /* wine color */
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    opacity: 0.9;
+}
 </style>
 </head>
 <body>
@@ -24,11 +54,11 @@
 <!-- Dashboard stats -->
 <div class="dashboard-stats">
     <div class="stat-card">
-        <h2>Total Teachers</h2>
+        <h2>Total Teachers Registered</h2>
         <p id="totalTeachers">0</p>
     </div>
     <div class="stat-card">
-        <h2>Total Students</h2>
+        <h2>Total Students Registered</h2>
         <p id="totalStudents">0</p>
     </div>
 </div>
@@ -40,9 +70,9 @@
 </div>
 
 <script>
-// Initialize totals (start at 0)
-let totalTeachers = 0;
-let totalStudents = 0;
+// Load saved totals from localStorage or initialize to 0
+let totalTeachers = localStorage.getItem('totalTeachers') ? parseInt(localStorage.getItem('totalTeachers')) : 0;
+let totalStudents = localStorage.getItem('totalStudents') ? parseInt(localStorage.getItem('totalStudents')) : 0;
 
 // Function to update totals in the dashboard
 function updateDashboard() {
@@ -50,14 +80,16 @@ function updateDashboard() {
     document.getElementById('totalStudents').innerText = totalStudents;
 }
 
-// Example functions to increment counts when a teacher/student is registered
+// Functions to increment totals when a teacher/student is registered
 function addTeacher() {
     totalTeachers++;
+    localStorage.setItem('totalTeachers', totalTeachers);
     updateDashboard();
 }
 
 function addStudent() {
     totalStudents++;
+    localStorage.setItem('totalStudents', totalStudents);
     updateDashboard();
 }
 

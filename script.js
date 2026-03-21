@@ -1,22 +1,30 @@
-const loginForm = document.getElementById('loginForm');
+// script.js
 
-loginForm.addEventListener('submit', function(e) {
+// Real login credentials
+const users = [
+    { id: "admin@adue.com", password: "12345678", role: "admin" },
+    { id: "phemmyallen1@gmail.com", password: "12345678", role: "staff" }
+];
+
+document.getElementById("loginForm").addEventListener("submit", function(e) {
     e.preventDefault();
 
-    const studentId = document.getElementById('studentId').value.trim();
-    const password = document.getElementById('password').value.trim();
+    const userId = document.getElementById("userId").value.trim();
+    const password = document.getElementById("password").value.trim();
+    const userType = document.getElementById("userType").value;
 
-    const testAccounts = [
-        { id: 'student1', password: '1234' },
-        { id: 'staff1', password: 'abcd' }
-    ];
+    // Check credentials
+    const user = users.find(u => u.id === userId && u.password === password && u.role === userType);
 
-    const matched = testAccounts.find(acc => acc.id === studentId && acc.password === password);
-
-    if (matched) {
-        alert('Login successful! Welcome ' + studentId);
-        window.location.href = 'student_dashboard.html';
+    if(user) {
+        if(user.role === "admin") {
+            window.location.href = "admin_dashboard.html"; // redirect to admin dashboard
+        } else if(user.role === "staff") {
+            window.location.href = "teacher_dashboard.html"; // redirect to teacher dashboard
+        } else if(user.role === "student") {
+            window.location.href = "student_dashboard.html"; // redirect to student dashboard
+        }
     } else {
-        alert('Invalid Student/Staff ID or password');
+        alert("Invalid login credentials. Please try again.");
     }
 });

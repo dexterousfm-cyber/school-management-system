@@ -26,11 +26,12 @@ table tr:hover { background:#fff2f2; }
 .modal-content button { width:100%; margin-top:10px; }
 button.cancel { background:#ccc; color:black; }
 button.cancel:hover { background:#999; }
+button.delete { background:#800000; color:white; margin-top:5px; }
+button.delete:hover { background:#a00000; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
     <div class="logo"><img src="logo-new.png" alt="Logo"></div>
     <div class="profile">
@@ -46,7 +47,7 @@ button.cancel:hover { background:#999; }
     <table id="studentsTable"></table>
 </div>
 
-<!-- Edit/Delete Modal -->
+<!-- Modal for edit/delete -->
 <div class="modal" id="modal">
   <div class="modal-content">
     <h3>Edit Student</h3>
@@ -56,33 +57,28 @@ button.cancel:hover { background:#999; }
     <input type="text" id="modalClass" placeholder="Class">
     <input type="text" id="modalYear" placeholder="Year">
     <input type="password" id="modalPassword" placeholder="Password">
-    <button onclick="saveStudent()">Save</button>
+    <button onclick="saveRecord()">Save</button>
     <button class="cancel" onclick="closeModal()">Cancel</button>
-    <button class="cancel" style="margin-top:5px;background:#800000;color:white;" onclick="deleteStudent()">Delete Student</button>
+    <button class="delete" onclick="deleteRecord()">Delete</button>
   </div>
 </div>
 
 <script>
-// Load data
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+// Load data from localStorage
 let students = JSON.parse(localStorage.getItem('students')) || [];
-let currentTeacherIndex = parseInt(localStorage.getItem('currentTeacherIndex'));
-let currentTeacher = teachers[currentTeacherIndex];
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+let currentTeacherIndex = parseInt(localStorage.getItem('currentTeacherIndex')) || 0;
+let currentTeacher = teachers[currentTeacherIndex] || {name:'Teacher'};
 document.getElementById('teacherName').innerText = `Welcome ${currentTeacher.name}`;
 
-// For modal editing
 let editIndex = null;
 
-// Render students
+// ---------- STUDENT FUNCTIONS ----------
 function renderStudentsTable() {
+    students = JSON.parse(localStorage.getItem('students')) || []; // always fetch latest
     const table = document.getElementById('studentsTable');
     let html = `<tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Student ID</th>
-        <th>Class</th>
-        <th>Year</th>
-        <th>Edit</th>
+        <th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th>
     </tr>`;
     students.forEach((s,i)=>{
         html += `<tr>
@@ -97,7 +93,6 @@ function renderStudentsTable() {
     table.innerHTML = html;
 }
 
-// Open student form for new registration
 function openStudentForm() {
     let name = prompt("Student Name:");
     let email = prompt("Email:");
@@ -107,41 +102,41 @@ function openStudentForm() {
     let password = prompt("Password:");
 
     students.push({name,email,studentID:id,studentClass,studentYear,password});
-    localStorage.setItem('students', JSON.stringify(students));
+    localStorage.setItem('students', JSON.stringify(students)); // shared
     renderStudentsTable();
 }
 
-// Open modal to edit/delete student
+// ---------- MODAL FUNCTIONS ----------
 function openModal(i) {
     editIndex = i;
-    document.getElementById('modalName').value = students[i].name;
-    document.getElementById('modalEmail').value = students[i].email;
-    document.getElementById('modalID').value = students[i].studentID;
-    document.getElementById('modalClass').value = students[i].studentClass || '';
-    document.getElementById('modalYear').value = students[i].studentYear || '';
-    document.getElementById('modalPassword').value = students[i].password;
+    const s = students[i];
+    document.getElementById('modalName').value = s.name;
+    document.getElementById('modalEmail').value = s.email;
+    document.getElementById('modalID').value = s.studentID;
+    document.getElementById('modalClass').value = s.studentClass || '';
+    document.getElementById('modalYear').value = s.studentYear || '';
+    document.getElementById('modalPassword').value = s.password;
     document.getElementById('modal').style.display = 'flex';
 }
 
-// Close modal
 function closeModal(){ document.getElementById('modal').style.display='none'; }
 
-// Save changes
-function saveStudent() {
-    students[editIndex].name = document.getElementById('modalName').value;
-    students[editIndex].email = document.getElementById('modalEmail').value;
-    students[editIndex].studentID = document.getElementById('modalID').value;
-    students[editIndex].studentClass = document.getElementById('modalClass').value;
-    students[editIndex].studentYear = document.getElementById('modalYear').value;
-    students[editIndex].password = document.getElementById('modalPassword').value;
+function saveRecord() {
+    const s = students[editIndex];
+    s.name = document.getElementById('modalName').value;
+    s.email = document.getElementById('modalEmail').value;
+    s.studentID = document.getElementById('modalID').value;
+    s.studentClass = document.getElementById('modalClass').value;
+    s.studentYear = document.getElementById('modalYear').value;
+    s.password = document.getElementById('modalPassword').value;
+
     localStorage.setItem('students', JSON.stringify(students));
     closeModal();
     renderStudentsTable();
 }
 
-// Delete student
-function deleteStudent() {
-    if(confirm("Are you sure you want to delete this student?")){
+function deleteRecord() {
+    if(confirm("Are you sure you want to delete?")){
         students.splice(editIndex,1);
         localStorage.setItem('students', JSON.stringify(students));
         closeModal();
@@ -152,9 +147,8 @@ function deleteStudent() {
 // Logout
 function logout(){ window.location.href='index.html'; }
 
-// Initial render
+// Load on start
 renderStudentsTable();
 </script>
-
 </body>
 </html>

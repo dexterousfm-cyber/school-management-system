@@ -1,54 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Register Teacher</title>
+<style>
+body { font-family: Arial; background:#f4f4f4; }
+.container {
+    max-width:400px;
+    margin:60px auto;
+    background:white;
+    padding:25px;
+    border-radius:10px;
+}
+input, button {
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+}
+button {
+    background:#722F37;
+    color:white;
+    border:none;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Register Teacher</h2>
+
+    <form id="teacherForm">
+        <input type="text" id="teacherName" placeholder="Name" required>
+        <input type="email" id="teacherEmail" placeholder="Email" required>
+        <input type="text" id="teacherID" placeholder="Teacher ID" required>
+        <input type="text" id="department" placeholder="Department" required>
+        <input type="password" id="password" placeholder="Password" required>
+        <button type="submit">Register</button>
+    </form>
+</div>
+
+<script>
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 
-document.getElementById('teacherForm').addEventListener('submit', function(e){
+document.getElementById("teacherForm").addEventListener("submit", function(e){
     e.preventDefault();
 
-    const name = teacherName.value;
-    const email = teacherEmail.value;
-    const teacherID = teacherID.value;
-    const department = department.value;
-    const password = password.value;
+    // ✅ CORRECT WAY TO GET VALUES
+    const name = document.getElementById("teacherName").value;
+    const email = document.getElementById("teacherEmail").value;
+    const teacherID = document.getElementById("teacherID").value;
+    const department = document.getElementById("department").value;
+    const password = document.getElementById("password").value;
 
+    // ✅ PUSH CORRECT DATA
     teachers.push({
-        name,
-        email,
-        teacherID,
-        department,
-        password,
-        profilePicture: ''
+        name: name,
+        email: email,
+        teacherID: teacherID,
+        department: department,
+        password: password,
+        profilePicture: ""
     });
 
-    localStorage.setItem('teachers', JSON.stringify(teachers));
+    localStorage.setItem("teachers", JSON.stringify(teachers));
 
-    alert("Teacher Registered!");
-});    const department = document.getElementById('department').value;
-    const password = document.getElementById('password').value;
-    const confirmPassword = document.getElementById('confirmPassword').value;
-    const fileInput = document.getElementById('profilePictureInput');
+    alert("Teacher Registered Successfully!");
 
-    if(password !== confirmPassword){
-        alert("Passwords do not match!");
-        return;
-    }
-
-    // Handle profile picture
-    if(fileInput.files.length > 0){
-        const reader = new FileReader();
-        reader.onload = function(){
-            const profilePicture = reader.result;
-            addTeacher(profilePicture);
-        }
-        reader.readAsDataURL(fileInput.files[0]);
-    } else {
-        addTeacher('');
-    }
-
-    function addTeacher(profilePicture){
-        teachers.push({name, email, teacherID, department, password, profilePicture});
-        localStorage.setItem('teachers', JSON.stringify(teachers));
-        alert("Teacher Registered Successfully!");
-        document.getElementById('teacherForm').reset();
-    }
+    document.getElementById("teacherForm").reset();
 });
 </script>
 

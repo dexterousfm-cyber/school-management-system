@@ -6,9 +6,8 @@
 <style>
 body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
 .header { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#800000; color:white; }
-.header .logo img { width:120px; height:auto; object-fit:contain; }
+.header .logo img { width:120px; }
 .header .profile { display:flex; align-items:center; gap:10px; }
-.header .profile img { width:40px; height:40px; border-radius:50%; border:1px solid white; object-fit:cover; }
 .header .profile span { font-weight:bold; }
 .container { padding:30px; }
 button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
@@ -17,242 +16,164 @@ button.primary:hover { background:#a00000; }
 table { width:100%; border-collapse:collapse; margin-top:20px; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.15); }
 th, td { padding:12px; text-align:center; border:1px solid #ddd; }
 th { background:#800000; color:white; }
-img.avatar-small { width:50px; height:50px; border-radius:50%; object-fit:cover; }
 table tr:hover { background:#fff2f2; }
 
-/* Modal */
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
-.modal-content input { width:100%; padding:5px; margin:5px 0; }
+/* Modal styling */
+.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.5); justify-content:center; align-items:center; }
+.modal-content { background:white; padding:20px; border-radius:10px; width:300px; }
+.modal-content h3 { margin-top:0; color:#800000; }
+.modal-content input { width:100%; padding:8px; margin:5px 0; border:1px solid #ccc; border-radius:5px; }
+.modal-content button { width:100%; margin-top:10px; }
+button.cancel { background:#ccc; color:black; }
+button.cancel:hover { background:#999; }
+button.delete { background:#800000; color:white; margin-top:5px; }
+button.delete:hover { background:#a00000; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
     <div class="logo"><img src="logo-new.png" alt="Logo"></div>
     <div class="profile">
-        <img src="admin.png" alt="Admin">
         <span id="adminName">Welcome Admin</span>
-        <button id="logoutBtn" onclick="logout()">Logout</button>
+        <button onclick="logout()">Logout</button>
     </div>
 </div>
 
 <div class="container">
+    <button class="primary" onclick="openTeacherForm()">Register Teacher</button>
+    <button class="primary" onclick="renderTeachersTable()">Show Teachers</button>
+    <button class="primary" onclick="openStudentForm()">Register Student</button>
+    <button class="primary" onclick="renderStudentsTable()">Show Students</button>
 
-    <!-- Action Buttons -->
-    <div class="actions">
-        <button class="primary" onclick="openTeacherForm()">Register Teacher</button>
-        <button class="primary" onclick="openStudentForm()">Register Student</button>
-        <button class="primary" onclick="showTable('teachers')">Show Teachers</button>
-        <button class="primary" onclick="showTable('students')">Show Students</button>
-    </div>
-
-    <!-- Tables -->
-    <table id="teachersTable"></table>
-    <table id="studentsTable" style="display:none;"></table>
-
+    <table id="table"></table>
 </div>
 
-<!-- Teacher Modal -->
-<div class="modal" id="teacherModal">
+<!-- Modal for edit/delete -->
+<div class="modal" id="modal">
   <div class="modal-content">
-    <h3>Register Teacher</h3>
-    <input type="text" id="teacherNameInput" placeholder="Name">
-    <input type="email" id="teacherEmailInput" placeholder="Email">
-    <input type="text" id="teacherIDInput" placeholder="Teacher ID">
-    <input type="text" id="teacherDeptInput" placeholder="Department">
-    <input type="password" id="teacherPasswordInput" placeholder="Password">
-    <input type="file" id="teacherPicInput">
-    <button onclick="registerTeacher()">Register</button>
-    <button onclick="closeTeacherForm()">Cancel</button>
-  </div>
-</div>
-
-<!-- Student Modal -->
-<div class="modal" id="studentModal">
-  <div class="modal-content">
-    <h3>Register Student</h3>
-    <input type="text" id="studentNameInput" placeholder="Name">
-    <input type="email" id="studentEmailInput" placeholder="Email">
-    <input type="text" id="studentIDInput" placeholder="Student ID">
-    <input type="text" id="studentClassInput" placeholder="Class">
-    <input type="text" id="studentYearInput" placeholder="Year">
-    <input type="password" id="studentPasswordInput" placeholder="Password">
-    <input type="file" id="studentPicInput">
-    <button onclick="registerStudent()">Register</button>
-    <button onclick="closeStudentForm()">Cancel</button>
+    <h3>Edit Record</h3>
+    <input type="text" id="modalName" placeholder="Name">
+    <input type="text" id="modalEmail" placeholder="Email">
+    <input type="text" id="modalID" placeholder="ID">
+    <input type="text" id="modalExtra" placeholder="Department/Class">
+    <input type="password" id="modalPassword" placeholder="Password">
+    <button onclick="saveRecord()">Save</button>
+    <button class="cancel" onclick="closeModal()">Cancel</button>
+    <button class="delete" onclick="deleteRecord()">Delete</button>
   </div>
 </div>
 
 <script>
-// --- DATA ARRAYS ---
+// Load data from localStorage
+let admins = JSON.parse(localStorage.getItem('admins')) || [];
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 let students = JSON.parse(localStorage.getItem('students')) || [];
+let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
+let currentAdmin = admins[currentAdminIndex];
+document.getElementById('adminName').innerText = `Welcome ${currentAdmin.name}`;
 
-// --- RENDER FUNCTIONS ---
-function renderTeachersTable(){
-    const table = document.getElementById('teachersTable');
-    let html = `<tr>
-        <th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th>
-    </tr>`;
+let editIndex = null;
+let editType = ''; // 'teacher' or 'student'
+
+// ---------- TEACHER FUNCTIONS ----------
+function renderTeachersTable() {
+    const table = document.getElementById('table');
+    let html = `<tr><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th></tr>`;
     teachers.forEach((t,i)=>{
         html += `<tr>
-            <td><img src="${t.profilePicture || 'teacher.png'}" class="avatar-small"></td>
             <td>${t.name}</td>
             <td>${t.email}</td>
             <td>${t.teacherID}</td>
-            <td>${t.department}</td>
-            <td>
-              <button onclick="editTeacher(${i})">Edit</button>
-              <button onclick="deleteTeacher(${i})">Delete</button>
-            </td>
+            <td>${t.department || ''}</td>
+            <td><button onclick="openModal(${i},'teacher')">Edit/Delete</button></td>
         </tr>`;
     });
     table.innerHTML = html;
 }
 
-function renderStudentsTable(){
-    const table = document.getElementById('studentsTable');
-    let html = `<tr>
-        <th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th>
-    </tr>`;
+function openTeacherForm() {
+    let name = prompt("Name:");
+    let email = prompt("Email:");
+    let id = prompt("Teacher ID:");
+    let department = prompt("Department:");
+    let password = prompt("Password:");
+
+    teachers.push({name,email,teacherID:id,department,password});
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+    renderTeachersTable();
+}
+
+// ---------- STUDENT FUNCTIONS ----------
+function renderStudentsTable() {
+    const table = document.getElementById('table');
+    let html = `<tr><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th></tr>`;
     students.forEach((s,i)=>{
         html += `<tr>
-            <td><img src="${s.profilePicture || 'student.png'}" class="avatar-small"></td>
             <td>${s.name}</td>
             <td>${s.email}</td>
             <td>${s.studentID}</td>
-            <td>${s.studentClass}</td>
-            <td>${s.studentYear}</td>
-            <td>
-              <button onclick="editStudent(${i})">Edit</button>
-              <button onclick="deleteStudent(${i})">Delete</button>
-            </td>
+            <td>${s.studentClass || ''}</td>
+            <td>${s.studentYear || ''}</td>
+            <td><button onclick="openModal(${i},'student')">Edit/Delete</button></td>
         </tr>`;
     });
     table.innerHTML = html;
 }
 
-// --- SHOW TABLES ---
-function showTable(table){
-    document.getElementById('teachersTable').style.display = (table==='teachers')?'':'none';
-    document.getElementById('studentsTable').style.display = (table==='students')?'':'none';
-}
+function openStudentForm() {
+    let name = prompt("Student Name:");
+    let email = prompt("Email:");
+    let id = prompt("Student ID:");
+    let studentClass = prompt("Class:");
+    let studentYear = prompt("Year:");
+    let password = prompt("Password:");
 
-// --- MODALS ---
-function openTeacherForm(){ document.getElementById('teacherModal').style.display='flex'; }
-function closeTeacherForm(){ document.getElementById('teacherModal').style.display='none'; }
-function openStudentForm(){ document.getElementById('studentModal').style.display='flex'; }
-function closeStudentForm(){ document.getElementById('studentModal').style.display='none'; }
-
-// --- REGISTER FUNCTIONS ---
-function registerTeacher(){
-    let name = document.getElementById('teacherNameInput').value;
-    let email = document.getElementById('teacherEmailInput').value;
-    let id = document.getElementById('teacherIDInput').value;
-    let dept = document.getElementById('teacherDeptInput').value;
-    let password = document.getElementById('teacherPasswordInput').value;
-    let file = document.getElementById('teacherPicInput').files[0];
-
-    if(!name || !email || !password){ alert('Name, Email, and Password are required'); return; }
-
-    let reader = new FileReader();
-    reader.onload = function(e){
-        let pic = e.target.result;
-        teachers.push({profilePicture:pic,name,email,teacherID:id,department:dept,password});
-        localStorage.setItem('teachers', JSON.stringify(teachers));
-        renderTeachersTable();
-        closeTeacherForm();
-    }
-    if(file) reader.readAsDataURL(file);
-    else {
-        teachers.push({profilePicture:'teacher.png',name,email,teacherID:id,department:dept,password});
-        localStorage.setItem('teachers', JSON.stringify(teachers));
-        renderTeachersTable();
-        closeTeacherForm();
-    }
-}
-
-function registerStudent(){
-    let name = document.getElementById('studentNameInput').value;
-    let email = document.getElementById('studentEmailInput').value;
-    let id = document.getElementById('studentIDInput').value;
-    let studentClass = document.getElementById('studentClassInput').value;
-    let year = document.getElementById('studentYearInput').value;
-    let password = document.getElementById('studentPasswordInput').value;
-    let file = document.getElementById('studentPicInput').files[0];
-
-    if(!name || !email || !password){ alert('Name, Email, and Password are required'); return; }
-
-    let reader = new FileReader();
-    reader.onload = function(e){
-        let pic = e.target.result;
-        students.push({profilePicture:pic,name,email,studentID:id,studentClass,studentYear:year,password});
-        localStorage.setItem('students', JSON.stringify(students));
-        renderStudentsTable();
-        closeStudentForm();
-    }
-    if(file) reader.readAsDataURL(file);
-    else {
-        students.push({profilePicture:'student.png',name,email,studentID:id,studentClass,studentYear:year,password});
-        localStorage.setItem('students', JSON.stringify(students));
-        renderStudentsTable();
-        closeStudentForm();
-    }
-}
-
-// --- EDIT & DELETE FUNCTIONS ---
-function editTeacher(i){
-    let t = teachers[i];
-    let newName = prompt("Name:", t.name); if(!newName) return;
-    let newEmail = prompt("Email:", t.email); if(!newEmail) return;
-    let newID = prompt("Teacher ID:", t.teacherID); if(!newID) return;
-    let newDept = prompt("Department:", t.department); if(!newDept) return;
-    let newPassword = prompt("Password:", t.password); if(!newPassword) return;
-    teachers[i] = {...t, name:newName, email:newEmail, teacherID:newID, department:newDept, password:newPassword};
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-    renderTeachersTable();
-    alert("Teacher updated!");
-}
-function deleteTeacher(i){
-    if(confirm("Delete this teacher?")){
-        teachers.splice(i,1);
-        localStorage.setItem('teachers', JSON.stringify(teachers));
-        renderTeachersTable();
-    }
-}
-function editStudent(i){
-    let s = students[i];
-    let newName = prompt("Name:", s.name); if(!newName) return;
-    let newEmail = prompt("Email:", s.email); if(!newEmail) return;
-    let newID = prompt("Student ID:", s.studentID); if(!newID) return;
-    let newClass = prompt("Class:", s.studentClass); if(!newClass) return;
-    let newYear = prompt("Year:", s.studentYear); if(!newYear) return;
-    let newPassword = prompt("Password:", s.password); if(!newPassword) return;
-    students[i] = {...s, name:newName, email:newEmail, studentID:newID, studentClass:newClass, studentYear:newYear, password:newPassword};
+    students.push({name,email,studentID:id,studentClass,studentYear,password});
     localStorage.setItem('students', JSON.stringify(students));
     renderStudentsTable();
-    alert("Student updated!");
 }
-function deleteStudent(i){
-    if(confirm("Delete this student?")){
-        students.splice(i,1);
-        localStorage.setItem('students', JSON.stringify(students));
-        renderStudentsTable();
+
+// ---------- MODAL FUNCTIONS ----------
+function openModal(i,type) {
+    editIndex = i;
+    editType = type;
+    const record = type==='teacher'? teachers[i] : students[i];
+    document.getElementById('modalName').value = record.name;
+    document.getElementById('modalEmail').value = record.email;
+    document.getElementById('modalID').value = type==='teacher'? record.teacherID : record.studentID;
+    document.getElementById('modalExtra').value = type==='teacher'? record.department || '' : record.studentClass || '';
+    document.getElementById('modalPassword').value = record.password;
+    document.getElementById('modal').style.display = 'flex';
+}
+
+function closeModal(){ document.getElementById('modal').style.display='none'; }
+
+function saveRecord() {
+    const record = editType==='teacher'? teachers[editIndex] : students[editIndex];
+    record.name = document.getElementById('modalName').value;
+    record.email = document.getElementById('modalEmail').value;
+    if(editType==='teacher') record.teacherID = document.getElementById('modalID').value;
+    else { record.studentID = document.getElementById('modalID').value; record.studentClass = document.getElementById('modalExtra').value; }
+    record.password = document.getElementById('modalPassword').value;
+
+    if(editType==='teacher') localStorage.setItem('teachers', JSON.stringify(teachers));
+    else localStorage.setItem('students', JSON.stringify(students));
+
+    closeModal();
+    editType==='teacher'? renderTeachersTable() : renderStudentsTable();
+}
+
+function deleteRecord() {
+    if(confirm("Are you sure you want to delete?")){
+        if(editType==='teacher') { teachers.splice(editIndex,1); localStorage.setItem('teachers', JSON.stringify(teachers)); renderTeachersTable();}
+        else { students.splice(editIndex,1); localStorage.setItem('students', JSON.stringify(students)); renderStudentsTable();}
+        closeModal();
     }
 }
 
-// --- LOGOUT ---
-function logout(){
-    window.location.href = "index.html";
-}
-
-// --- INITIAL LOAD ---
-renderTeachersTable();
-renderStudentsTable();
-showTable('teachers');
+// Logout
+function logout(){ window.location.href='index.html'; }
 </script>
-
 </body>
 </html>

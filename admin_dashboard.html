@@ -5,28 +5,122 @@
 <title>Admin Dashboard</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-body{font-family:Arial, sans-serif;margin:0;padding:0;background:#f9f9f9;}
-.header{background:#800000;color:white;padding:15px;display:flex;justify-content:space-between;align-items:center;}
-.header .profile{display:flex;align-items:center;gap:15px;}
-.header img.logo{width:60px;}
-.header img.avatar{width:80px;height:80px;border-radius:50%;object-fit:cover;border:2px solid white;}
-#logoutBtn{padding:8px 15px;background:white;color:#800000;border:none;border-radius:5px;cursor:pointer;font-weight:bold;}
-#logoutBtn:hover{background:#f0f0f0;}
-.container{padding:20px;}
-h2{color:#800000;}
-table{width:100%;border-collapse:collapse;margin-top:15px;}
-table, th, td{border:1px solid #ccc;}
-th, td{padding:10px;text-align:center;}
-th{background:#800000;color:white;}
-img.avatar-small{width:50px;height:50px;border-radius:50%;object-fit:cover;}
-button.action-btn{padding:5px 10px;background:#800000;color:white;border:none;border-radius:5px;cursor:pointer;}
-button.action-btn:hover{background:#a00000;}
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f9f9f9;
+}
+
+/* Header */
+.header {
+    background: #800000;
+    color: white;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 30px;
+}
+
+.header .logo-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header .logo-section img.logo {
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+}
+
+.header .profile-section {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header .profile-section img.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid white;
+}
+
+#logoutBtn {
+    padding: 10px 20px;
+    background: white;
+    color: #800000;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#logoutBtn:hover { background: #f0f0f0; }
+
+/* Container */
+.container {
+    padding: 20px 40px;
+}
+
+h2 {
+    color: #800000;
+    margin-top: 40px;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+table, th, td {
+    border: 1px solid #ccc;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background: #800000;
+    color: white;
+}
+
+img.avatar-small {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
+}
+
+button.action-btn {
+    padding: 5px 10px;
+    background: #800000;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button.action-btn:hover { background: #a00000; }
+
+.register-buttons {
+    margin: 20px 0;
+    display: flex;
+    gap: 15px;
+}
 </style>
 </head>
 <body>
 
+<!-- Header -->
 <div class="header">
-    <div class="profile">
+    <div class="logo-section">
         <img src="logo-new.png" alt="School Logo" class="logo">
         <div>
             <img id="headerAvatar" src="admin.png" class="avatar">
@@ -36,20 +130,36 @@ button.action-btn:hover{background:#a00000;}
     <button id="logoutBtn">Logout</button>
 </div>
 
+<!-- Main Content -->
 <div class="container">
-    <div style="margin:10px 0;">
+    <div class="register-buttons">
         <button onclick="window.location.href='register_teacher.html'" class="action-btn">Register Teacher</button>
         <button onclick="window.location.href='register_student.html'" class="action-btn">Register Student</button>
     </div>
 
     <h2>Teachers List</h2>
     <table id="teachersTable">
-        <tr><th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th></tr>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Teacher ID</th>
+            <th>Department</th>
+            <th>Edit</th>
+        </tr>
     </table>
 
     <h2>Students List</h2>
     <table id="studentsTable">
-        <tr><th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th></tr>
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Student ID</th>
+            <th>Class</th>
+            <th>Year</th>
+            <th>Edit</th>
+        </tr>
     </table>
 </div>
 
@@ -60,7 +170,7 @@ document.getElementById('logoutBtn').addEventListener('click', function(){
     window.location.href='index.html';
 });
 
-// Load Admin Profile (if multiple admins)
+// Load Admin Profile
 let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
 let admins = JSON.parse(localStorage.getItem('admins')) || [{name:'Admin', profilePicture:'admin.png'}];
 document.getElementById('headerName').innerText = 'Welcome ' + admins[currentAdminIndex].name;
@@ -105,12 +215,7 @@ function editStudent(i){
 </script>
 
 </body>
-</html>        <img id="adminPic" src="admin.png" alt="Admin Picture">
-        <h2>Welcome, <span id="adminName"></span></h2>
-    </div>
-
-    <div class="actions">
-        <button onclick="window.location.href='register_teacher.html'">Register Teacher</button>
+</html>        <button onclick="window.location.href='register_teacher.html'">Register Teacher</button>
         <button onclick="window.location.href='register_student.html'">Register Student</button>
     </div>
 

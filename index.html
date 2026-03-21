@@ -7,7 +7,6 @@
 </head>
 <body>
 
-<!-- Top header -->
 <div class="header">
     <div class="header-content">
         <img src="logo-new.png" alt="Header Logo" class="logo-header">
@@ -15,7 +14,6 @@
     </div>
 </div>
 
-<!-- Centered login box -->
 <div class="login-wrapper">
     <div class="login-box">
         <img src="login-logo.png" alt="Login Box Logo" class="logo-box">
@@ -33,47 +31,47 @@
 </div>
 
 <script>
-    const loginForm = document.getElementById("loginForm");
+const loginForm = document.getElementById("loginForm");
 
-    loginForm.addEventListener("submit", function(e) {
-        e.preventDefault();
+loginForm.addEventListener("submit", function(e){
+    e.preventDefault();
 
-        const userId = document.getElementById("userId").value.trim();
-        const password = document.getElementById("password").value.trim();
+    const userId = document.getElementById("userId").value.trim().toLowerCase();
+    const password = document.getElementById("password").value;
 
-        // Hard-coded admin & teacher
-        const credentials = [
-            { email: "admin@adue.com", password: "12345678", redirect: "admin_dashboard.html" },
-            { email: "phemmyallen1@gmail.com", password: "12345678", redirect: "teacher_dashboard.html" }
-        ];
+    let user = null;
 
-        let user = credentials.find(c => c.email === userId && c.password === password);
+    // 1️⃣ Check admin (hardcoded)
+    const admins = [
+        { email: "admin@adue.com", password: "12345678", redirect: "admin_dashboard.html" }
+    ];
+    user = admins.find(a => a.email.toLowerCase() === userId && a.password === password);
 
-        // Check students in localStorage
-        if(!user){
-            const students = JSON.parse(localStorage.getItem('students')) || [];
-            const student = students.find(s => s.email === userId && s.password === password);
-            if(student){
-                user = { redirect: "student_dashboard.html" };
-            }
+    // 2️⃣ Check teachers in localStorage
+    if(!user){
+        const teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+        const teacher = teachers.find(t => t.email.toLowerCase() === userId && t.password === password);
+        if(teacher){
+            user = { redirect: "teacher_dashboard.html" };
         }
+    }
 
-        // Check teachers in localStorage
-        if(!user){
-            const teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-            const teacher = teachers.find(t => t.email === userId && t.password === password);
-            if(teacher){
-                user = { redirect: "teacher_dashboard.html" };
-            }
+    // 3️⃣ Check students in localStorage
+    if(!user){
+        const students = JSON.parse(localStorage.getItem('students')) || [];
+        const student = students.find(s => s.email.toLowerCase() === userId && s.password === password);
+        if(student){
+            user = { redirect: "student_dashboard.html" };
         }
+    }
 
-        if(user){
-            alert("Login successful!");
-            window.location.href = user.redirect;
-        } else {
-            alert("Invalid login credentials!");
-        }
-    });
+    if(user){
+        alert("Login successful!");
+        window.location.href = user.redirect;
+    } else {
+        alert("Invalid login credentials!");
+    }
+});
 </script>
 
 </body>

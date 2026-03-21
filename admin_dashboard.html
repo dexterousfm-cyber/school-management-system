@@ -19,6 +19,7 @@ th, td { padding:12px; text-align:center; border:1px solid #ddd; }
 th { background:#800000; color:white; }
 img.avatar-small { width:50px; height:50px; border-radius:50%; object-fit:cover; }
 table tr:hover { background:#fff2f2; }
+
 /* Modal */
 .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
 .modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
@@ -27,6 +28,7 @@ table tr:hover { background:#fff2f2; }
 </head>
 <body>
 
+<!-- Header -->
 <div class="header">
     <div class="logo"><img src="logo-new.png" alt="Logo"></div>
     <div class="profile">
@@ -38,6 +40,7 @@ table tr:hover { background:#fff2f2; }
 
 <div class="container">
 
+    <!-- Action Buttons -->
     <div class="actions">
         <button class="primary" onclick="openTeacherForm()">Register Teacher</button>
         <button class="primary" onclick="openStudentForm()">Register Student</button>
@@ -45,6 +48,7 @@ table tr:hover { background:#fff2f2; }
         <button class="primary" onclick="showTable('students')">Show Students</button>
     </div>
 
+    <!-- Tables -->
     <table id="teachersTable"></table>
     <table id="studentsTable" style="display:none;"></table>
 
@@ -111,6 +115,89 @@ function renderStudentsTable(){
             <td>${s.email}</td>
             <td>${s.studentID}</td>
             <td>${s.studentClass}</td>
+            <td>${s.studentYear}</td>
+            <td><button onclick="editStudent(${i})">Edit</button></td>
+        </tr>`;
+    });
+    table.innerHTML = html;
+}
+
+// Show/Hide Tables
+function showTable(table){
+    document.getElementById('teachersTable').style.display = (table==='teachers')?'':'none';
+    document.getElementById('studentsTable').style.display = (table==='students')?'':'none';
+}
+
+// Edit placeholders
+function editTeacher(i){ alert('Edit Teacher: '+teachers[i].name); }
+function editStudent(i){ alert('Edit Student: '+students[i].name); }
+
+// Logout
+document.getElementById('logoutBtn').addEventListener('click', ()=>alert('Logout clicked'));
+
+// Teacher Form
+function openTeacherForm(){ document.getElementById('teacherModal').style.display='flex'; }
+function closeTeacherForm(){ document.getElementById('teacherModal').style.display='none'; }
+function registerTeacher(){
+    let name = document.getElementById('teacherNameInput').value;
+    let email = document.getElementById('teacherEmailInput').value;
+    let id = document.getElementById('teacherIDInput').value;
+    let dept = document.getElementById('teacherDeptInput').value;
+    let file = document.getElementById('teacherPicInput').files[0];
+
+    if(!name || !email){ alert('Name and Email are required'); return; }
+
+    let reader = new FileReader();
+    reader.onload = function(e){
+        let pic = e.target.result;
+        teachers.push({profilePicture:pic,name,email,teacherID:id,department:dept});
+        renderTeachersTable();
+        closeTeacherForm();
+    }
+    if(file) reader.readAsDataURL(file);
+    else {
+        teachers.push({profilePicture:'teacher.png',name,email,teacherID:id,department:dept});
+        renderTeachersTable();
+        closeTeacherForm();
+    }
+}
+
+// Student Form
+function openStudentForm(){ document.getElementById('studentModal').style.display='flex'; }
+function closeStudentForm(){ document.getElementById('studentModal').style.display='none'; }
+function registerStudent(){
+    let name = document.getElementById('studentNameInput').value;
+    let email = document.getElementById('studentEmailInput').value;
+    let id = document.getElementById('studentIDInput').value;
+    let studentClass = document.getElementById('studentClassInput').value;
+    let year = document.getElementById('studentYearInput').value;
+    let file = document.getElementById('studentPicInput').files[0];
+
+    if(!name || !email){ alert('Name and Email are required'); return; }
+
+    let reader = new FileReader();
+    reader.onload = function(e){
+        let pic = e.target.result;
+        students.push({profilePicture:pic,name,email,studentID:id,studentClass,studentYear:year});
+        renderStudentsTable();
+        closeStudentForm();
+    }
+    if(file) reader.readAsDataURL(file);
+    else {
+        students.push({profilePicture:'student.png',name,email,studentID:id,studentClass,studentYear:year});
+        renderStudentsTable();
+        closeStudentForm();
+    }
+}
+
+// Initial load
+renderTeachersTable();
+renderStudentsTable();
+showTable('teachers');
+</script>
+
+</body>
+</html>            <td>${s.studentClass}</td>
             <td>${s.studentYear}</td>
             <td><button onclick="editStudent(${i})">Edit</button></td>
         </tr>`;

@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
+<link rel="stylesheet" href="styles.css">
 
 <style>
+/* PAGE */
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -15,19 +17,35 @@ body {
 .header {
     background: #800000;
     color: white;
-    padding: 15px;
-    text-align: center;
+    padding: 15px 20px;
 }
 
-/* BUTTON AREA */
-.actions {
-    text-align: center;
+.header-content {
+    display: flex;
+    align-items: center;
+}
+
+.header img {
+    width: 50px;
+    margin-right: 10px;
+}
+
+/* SECTION */
+.section {
     margin: 20px;
+    background: white;
+    padding: 15px;
+    border-radius: 8px;
 }
 
-button {
+/* BUTTONS */
+.actions {
+    margin-bottom: 15px;
+}
+
+.actions button {
     padding: 10px 15px;
-    margin: 5px;
+    margin-right: 10px;
     border: none;
     background: #800000;
     color: white;
@@ -35,18 +53,8 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+.actions button:hover {
     background: #a00000;
-}
-
-/* CARD TABLE */
-.card {
-    width: 90%;
-    margin: auto;
-    background: white;
-    border-radius: 10px;
-    padding: 15px;
-    box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 /* TABLE */
@@ -58,7 +66,7 @@ table {
 th, td {
     padding: 12px;
     border-bottom: 1px solid #ccc;
-    text-align: center;
+    text-align: left;
 }
 
 th {
@@ -70,20 +78,27 @@ th {
 
 <body>
 
+<!-- HEADER -->
 <div class="header">
-    <h2>Admin Dashboard</h2>
+    <div class="header-content">
+        <img src="logo-new.png">
+        <h2>ADUE International School - Admin Dashboard</h2>
+    </div>
 </div>
 
-<div class="actions">
-    <button onclick="showTeachers()">Show Teachers</button>
-    <button onclick="showStudents()">Show Students</button>
-    <button onclick="registerTeacher()">Add Teacher</button>
-    <button onclick="registerStudent()">Add Student</button>
-    <button onclick="logout()">Logout</button>
-</div>
+<!-- MAIN SECTION -->
+<div class="section">
 
-<div class="card">
+    <div class="actions">
+        <button onclick="showTeachers()">Teachers</button>
+        <button onclick="showStudents()">Students</button>
+        <button onclick="registerTeacher()">Add Teacher</button>
+        <button onclick="registerStudent()">Add Student</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
     <table id="table"></table>
+
 </div>
 
 <script>
@@ -164,7 +179,7 @@ function registerTeacher(){
     teachers.push({name,email,teacherID:id,password});
     localStorage.setItem('teachers', JSON.stringify(teachers));
 
-    alert("Teacher Added");
+    alert("Teacher Added Successfully");
     showTeachers();
 }
 
@@ -185,7 +200,7 @@ function registerStudent(){
     students.push({name,email,studentID:id,password});
     localStorage.setItem('students', JSON.stringify(students));
 
-    alert("Student Added");
+    alert("Student Added Successfully");
     showStudents();
 }
 

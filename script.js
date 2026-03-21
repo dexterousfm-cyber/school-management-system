@@ -11,18 +11,16 @@ document.getElementById("loginForm").addEventListener("submit", function(e) {
 
     const userId = document.getElementById("userId").value.trim();
     const password = document.getElementById("password").value.trim();
-    const userType = document.getElementById("userType").value;
 
     // Check credentials
-    const user = users.find(u => u.id === userId && u.password === password && u.role === userType);
+    const user = users.find(u => u.id === userId && u.password === password);
 
     if(user) {
+        // Redirect based on role
         if(user.role === "admin") {
-            window.location.href = "admin_dashboard.html"; // redirect to admin dashboard
+            window.location.href = "admin_dashboard.html";
         } else if(user.role === "staff") {
-            window.location.href = "teacher_dashboard.html"; // redirect to teacher dashboard
-        } else if(user.role === "student") {
-            window.location.href = "student_dashboard.html"; // redirect to student dashboard
+            window.location.href = "teacher_dashboard.html";
         }
     } else {
         alert("Invalid login credentials. Please try again.");

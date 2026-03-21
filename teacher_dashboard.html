@@ -5,48 +5,40 @@
 <title>Teacher Dashboard - ADUE Portal</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-/* Header styling */
-.header {
-    background-color: #722F37; 
-    padding: 20px;
-    color: white;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-.header h1 { margin: 0; font-size: 24px; }
-.logout-btn { background-color: white; color: #722F37; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-weight: bold; }
-.logout-btn:hover { opacity: 0.9; }
-
-/* Welcome info */
-#welcome { margin: 20px auto; text-align: center; color: #722F37; font-size: 20px; }
-
-/* Table styling */
-table { width: 95%; margin: 20px auto; border-collapse: collapse; }
-th, td { border: 1px solid #ccc; padding: 10px; text-align: center; }
-th { background-color: #722F37; color: white; }
-button.update-btn { background-color: #4CAF50; color: white; border: none; padding: 5px 10px; cursor: pointer; border-radius: 5px; }
-button.update-btn:hover { opacity: 0.9; }
-
-/* Modal styling for updating scores/subject */
-.modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.5); }
-.modal-content { background-color: #fff; margin: 10% auto; padding: 20px; border-radius: 12px; width: 400px; box-shadow: 0 4px 12px rgba(0,0,0,0.2); }
-.modal-content h3 { margin-top: 0; color: #722F37; text-align: center; }
-.modal-content input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 8px; border: 1px solid #ccc; }
-.modal-content button { width: 48%; padding: 10px; margin-top: 10px; border-radius: 6px; cursor: pointer; border: none; }
-.modal-content .save-btn { background-color: #4CAF50; color: white; }
-.modal-content .cancel-btn { background-color: #f44336; color: white; }
-.modal-content .save-btn:hover, .modal-content .cancel-btn:hover { opacity: 0.9; }
+.header { background-color:#722F37; padding:20px; color:white; display:flex; align-items:center; justify-content:space-between; }
+.header-left { display:flex; align-items:center; }
+.header-left img { width:60px; height:60px; border-radius:50%; margin-right:15px; }
+.logout-btn { background-color:white; color:#722F37; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; }
+.logout-btn:hover { opacity:0.9; }
+#welcome { text-align:center; margin:20px; color:#722F37; font-size:20px; }
+table { width:95%; margin:20px auto; border-collapse:collapse; }
+th, td { border:1px solid #ccc; padding:10px; text-align:center; }
+th { background-color:#722F37; color:white; }
+button.update-btn { background-color:#4CAF50; color:white; border:none; padding:5px 10px; cursor:pointer; border-radius:5px; }
+button.update-btn:hover { opacity:0.9; }
+.modal { display:none; position:fixed; z-index:1000; left:0; top:0; width:100%; height:100%; overflow:auto; background-color: rgba(0,0,0,0.5); }
+.modal-content { background-color:#fff; margin:10% auto; padding:20px; border-radius:12px; width:400px; box-shadow:0 4px 12px rgba(0,0,0,0.2); }
+.modal-content h3 { margin-top:0; color:#722F37; text-align:center; }
+.modal-content input { width:100%; padding:10px; margin:10px 0; border-radius:8px; border:1px solid #ccc; }
+.modal-content button { width:48%; padding:10px; margin-top:10px; border-radius:6px; cursor:pointer; border:none; }
+.modal-content .save-btn { background-color:#4CAF50; color:white; }
+.modal-content .cancel-btn { background-color:#f44336; color:white; }
+.modal-content .save-btn:hover, .modal-content .cancel-btn:hover { opacity:0.9; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <h1>Teacher Dashboard</h1>
+    <div class="header-left">
+        <img id="teacherLogo" src="default-teacher.png" alt="Teacher Logo">
+        <h1>Teacher Dashboard</h1>
+    </div>
     <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
-<div id="welcome">Welcome, <span id="teacherNameDisplay"></span> (<span id="teacherEmailDisplay"></span>)</div>
+<div id="welcome">
+    Welcome, <span id="teacherNameDisplay"></span> (<span id="teacherEmailDisplay"></span>)
+</div>
 
 <h2 style="text-align:center;">Students List</h2>
 <table id="studentsTable">
@@ -58,7 +50,6 @@ button.update-btn:hover { opacity: 0.9; }
     <tbody></tbody>
 </table>
 
-<!-- Modal for updating subject/score -->
 <div id="editModal" class="modal">
     <div class="modal-content">
         <h3>Update Student</h3>
@@ -72,22 +63,25 @@ button.update-btn:hover { opacity: 0.9; }
 </div>
 
 <script>
-// Simulate teacher login (replace with real login system)
-const currentTeacherEmail = "phemmyallen1@gmail.com"; // Example
+// Get current teacher (simulate login)
+const currentTeacherEmail = "phemmyallen1@gmail.com"; 
 const teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 const teacher = teachers.find(t => t.email === currentTeacherEmail);
-document.getElementById('teacherNameDisplay').innerText = teacher ? teacher.name : 'Unknown';
-document.getElementById('teacherEmailDisplay').innerText = currentTeacherEmail;
+
+if(teacher){
+    document.getElementById('teacherNameDisplay').innerText = teacher.name;
+    document.getElementById('teacherEmailDisplay').innerText = teacher.email;
+    document.getElementById('teacherLogo').src = teacher.profilePicture || 'default-teacher.png';
+} else {
+    document.getElementById('teacherNameDisplay').innerText = 'Unknown';
+}
 
 // Logout
 function logout(){ window.location.href="index.html"; }
 
 // Load students
 let students = JSON.parse(localStorage.getItem('students')) || [];
-students.forEach(s=>{
-    if(!s.subject) s.subject='';
-    if(!s.score) s.score='';
-});
+students.forEach(s=>{ if(!s.subject) s.subject=''; if(!s.score) s.score=''; });
 
 // Render table
 function renderStudents(){

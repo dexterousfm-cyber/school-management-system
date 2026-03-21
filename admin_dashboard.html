@@ -24,7 +24,6 @@ table tr:hover { background:#fff2f2; }
 .modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
 .modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
 .modal-content input { width:100%; padding:5px; margin:5px 0; }
-.modal-content label { font-weight:normal; font-size:14px; display:block; margin-top:5px; cursor:pointer; }
 </style>
 </head>
 <body>
@@ -64,7 +63,7 @@ table tr:hover { background:#fff2f2; }
     <input type="text" id="teacherIDInput" placeholder="Teacher ID">
     <input type="text" id="teacherDeptInput" placeholder="Department">
     <input type="password" id="teacherPasswordInput" placeholder="Password">
-    <label><input type="checkbox" id="showTeacherPassword" onclick="togglePassword('teacher')"> Show Password</label>
+    <label><input type="checkbox" onclick="togglePassword('teacher')"> Show Password</label>
     <input type="file" id="teacherPicInput">
     <button onclick="registerTeacher()">Register</button>
     <button onclick="closeTeacherForm()">Cancel</button>
@@ -81,7 +80,7 @@ table tr:hover { background:#fff2f2; }
     <input type="text" id="studentClassInput" placeholder="Class">
     <input type="text" id="studentYearInput" placeholder="Year">
     <input type="password" id="studentPasswordInput" placeholder="Password">
-    <label><input type="checkbox" id="showStudentPassword" onclick="togglePassword('student')"> Show Password</label>
+    <label><input type="checkbox" onclick="togglePassword('student')"> Show Password</label>
     <input type="file" id="studentPicInput">
     <button onclick="registerStudent()">Register</button>
     <button onclick="closeStudentForm()">Cancel</button>
@@ -93,7 +92,7 @@ table tr:hover { background:#fff2f2; }
 let teachers = [];
 let students = [];
 
-// Render Functions
+// Render Tables
 function renderTeachersTable(){
     const table = document.getElementById('teachersTable');
     let html = `<tr>
@@ -152,24 +151,19 @@ function showTable(table){
     document.getElementById('studentsTable').style.display = (table==='students')?'':'none';
 }
 
+// Toggle Password Visibility
+function togglePassword(type){
+    let input = (type==='teacher') ? document.getElementById('teacherPasswordInput') : document.getElementById('studentPasswordInput');
+    input.type = (input.type === 'password') ? 'text' : 'password';
+}
+
 // Edit placeholders
 function editTeacher(i){ alert('Edit Teacher: '+teachers[i].name); }
 function editStudent(i){ alert('Edit Student: '+students[i].name); }
 
 // ---------------- LOGOUT ----------------
 function logout() {
-    window.location.href = 'index.html'; // make sure this file exists
-}
-
-// ---------------- SHOW/HIDE PASSWORD ----------------
-function togglePassword(type) {
-    if(type === 'teacher'){
-        const pwd = document.getElementById('teacherPasswordInput');
-        pwd.type = pwd.type === 'password' ? 'text' : 'password';
-    } else if(type === 'student'){
-        const pwd = document.getElementById('studentPasswordInput');
-        pwd.type = pwd.type === 'password' ? 'text' : 'password';
-    }
+    window.location.href = 'index.html'; // redirect to login page
 }
 
 // Teacher Form

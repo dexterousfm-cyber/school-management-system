@@ -1,31 +1,34 @@
-// Define login credentials
-const adminCredentials = {
-    email: "admin@adue.com",
-    password: "12345678"
-};
+document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
 
-const staffCredentials = {
-    email: "phemmyallen1@gmail.com",
-    password: "12345678"
-};
+    const userId = document.getElementById('userId').value;
+    const password = document.getElementById('password').value;
 
-// Get login form
-const loginForm = document.getElementById("loginForm");
-
-loginForm.addEventListener("submit", function(e) {
-    e.preventDefault(); // prevent form refresh
-
-    const userId = document.getElementById("userId").value;
-    const password = document.getElementById("password").value;
-
-    // Check credentials
-    if(userId === adminCredentials.email && password === adminCredentials.password) {
-        alert("Admin login successful!");
-        window.location.href = "admin_dashboard.html"; // go to admin dashboard
-    } else if(userId === staffCredentials.email && password === staffCredentials.password) {
-        alert("Staff login successful!");
-        window.location.href = "teacher_dashboard.html"; // go to teacher dashboard
-    } else {
-        alert("Invalid login credentials!");
+    // ADMIN LOGIN
+    if (userId === "admin@adue.com" && password === "12345678") {
+        window.location.href = "admin_dashboard.html";
+        return;
     }
+
+    // TEACHER LOGIN
+    let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+    let foundTeacher = teachers.find(t => t.teacherID === userId && t.password === password);
+
+    if (foundTeacher) {
+        localStorage.setItem('loggedInTeacher', JSON.stringify(foundTeacher));
+        window.location.href = "teacher_dashboard.html";
+        return;
+    }
+
+    // STUDENT LOGIN
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+    let foundStudent = students.find(s => s.studentID === userId && s.password === password);
+
+    if (foundStudent) {
+        localStorage.setItem('loggedInStudent', JSON.stringify(foundStudent));
+        window.location.href = "student_dashboard.html";
+        return;
+    }
+
+    alert("Invalid Login Details!");
 });

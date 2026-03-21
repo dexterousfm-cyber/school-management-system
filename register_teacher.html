@@ -4,24 +4,93 @@
 <meta charset="UTF-8">
 <title>Register Teacher - ADUE Portal</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+body { font-family: Arial, sans-serif; background: #f4f4f4; margin:0; padding:0; }
+.header { background-color: #722F37; padding: 20px; text-align: center; color: white; display:flex; justify-content:center; align-items:center; }
+.header img { height: 60px; margin-right: 15px; }
+.header h1 { font-size: 28px; margin:0; }
+
+.registration-wrapper {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 30px;
+    background-color: #fff;
+    border-radius: 12px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+}
+
+.registration-wrapper h2 {
+    text-align: center;
+    color: #722F37;
+    margin-bottom: 25px;
+}
+
+.registration-wrapper input, .registration-wrapper select {
+    width: 100%;
+    padding: 12px 15px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+.registration-wrapper input:focus {
+    border-color: #722F37;
+    outline: none;
+}
+
+.registration-wrapper button {
+    width: 100%;
+    padding: 14px;
+    margin-top: 15px;
+    background-color: #722F37;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.registration-wrapper button:hover {
+    opacity: 0.9;
+}
+
+.registration-wrapper .links {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.registration-wrapper .links a {
+    color: #722F37;
+    text-decoration: none;
+    margin: 0 10px;
+}
+
+.registration-wrapper .links a:hover {
+    text-decoration: underline;
+}
+</style>
 </head>
 <body>
 
+<!-- Header -->
 <div class="header">
     <img src="logo-new.png" alt="Logo">
     <h1>Register Teacher</h1>
 </div>
 
+<!-- Registration Form -->
 <div class="registration-wrapper">
     <h2>Teacher Information</h2>
     <form id="teacherForm">
         <input type="text" id="teacherName" placeholder="Full Name" required>
         <input type="email" id="teacherEmail" placeholder="Email" required>
         <input type="text" id="teacherID" placeholder="Teacher ID" required>
-        <input type="text" id="department" placeholder="Department" required>
+        <input type="text" id="department" placeholder="Department (e.g., Science)" required>
         <input type="password" id="password" placeholder="Password" required>
         <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
-        <input type="text" id="teacherPicture" placeholder="Picture URL (optional)">
+        <label>Upload Profile Picture:</label>
+        <input type="file" id="profilePictureInput" accept="image/*">
         <button type="submit">Register Teacher</button>
     </form>
     <div class="links">
@@ -30,23 +99,45 @@
 </div>
 
 <script>
+// Fetch stored teachers or initialize
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-document.getElementById('teacherForm').addEventListener('submit', function(e){
+
+// Handle form submission
+document.getElementById('teacherForm').addEventListener('submit', function(e) {
     e.preventDefault();
+
+    // Collect teacher data
     const name = document.getElementById('teacherName').value;
     const email = document.getElementById('teacherEmail').value;
     const teacherID = document.getElementById('teacherID').value;
     const department = document.getElementById('department').value;
     const password = document.getElementById('password').value;
     const confirmPassword = document.getElementById('confirmPassword').value;
-    const profilePicture = document.getElementById('teacherPicture').value;
+    const fileInput = document.getElementById('profilePictureInput');
 
-    if(password !== confirmPassword){ alert("Passwords do not match!"); return; }
+    if(password !== confirmPassword){
+        alert("Passwords do not match!");
+        return;
+    }
 
-    teachers.push({name,email,teacherID,department,password,profilePicture});
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-    alert("Teacher registered successfully!");
-    this.reset();
+    // Handle profile picture
+    if(fileInput.files.length > 0){
+        const reader = new FileReader();
+        reader.onload = function(){
+            const profilePicture = reader.result;
+            addTeacher(profilePicture);
+        }
+        reader.readAsDataURL(fileInput.files[0]);
+    } else {
+        addTeacher('');
+    }
+
+    function addTeacher(profilePicture){
+        teachers.push({name, email, teacherID, department, password, profilePicture});
+        localStorage.setItem('teachers', JSON.stringify(teachers));
+        alert("Teacher Registered Successfully!");
+        document.getElementById('teacherForm').reset();
+    }
 });
 </script>
 

@@ -92,7 +92,15 @@ let students = [];
 // Render Functions
 function renderTeachersTable(){
     const table = document.getElementById('teachersTable');
-    let html = `<tr><th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th></tr>`;
+    let html = `<tr>
+        <th>Picture</th>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Teacher ID</th>
+        <th>Department</th>
+        <th>Password</th>
+        <th>Edit</th>
+    </tr>`;
     teachers.forEach((t,i)=>{
         html += `<tr>
             <td><img src="${t.profilePicture}" class="avatar-small"></td>
@@ -100,6 +108,7 @@ function renderTeachersTable(){
             <td>${t.email}</td>
             <td>${t.teacherID}</td>
             <td>${t.department}</td>
+            <td>${t.password}</td>
             <td><button onclick="editTeacher(${i})">Edit</button></td>
         </tr>`;
     });
@@ -135,9 +144,7 @@ function editStudent(i){ alert('Edit Student: '+students[i].name); }
 
 // ---------------- LOGOUT ----------------
 function logout() {
-    // Optional: clear session data here
-    // localStorage.removeItem('adminLoggedIn'); 
-    window.location.href = 'login.html'; // redirect to login page
+    window.location.href = 'index.html'; // replace 'index.html' with your actual login page
 }
 
 // Teacher Form

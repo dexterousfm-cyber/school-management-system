@@ -2,41 +2,55 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Admin Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | ADUE</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
-<div class="container">
+<header class="header">
+    <img src="logo-new.png" alt="ADUE Logo" class="logo">
     <h1>Admin Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
+</header>
 
-    <h2>Add Teacher</h2>
-    <form id="addTeacherForm">
-        <input type="text" id="teacherName" placeholder="Full Name" required>
-        <input type="email" id="teacherEmail" placeholder="Email" required>
-        <input type="password" id="teacherPassword" placeholder="Password" required>
-        <input type="text" id="teacherSubjects" placeholder="Subjects (Math, English)" required>
-        <button type="submit">Add Teacher</button>
-    </form>
+<main class="dashboard">
 
-    <h2>Add Student</h2>
-    <form id="addStudentForm">
-        <input type="text" id="studentName" placeholder="Full Name" required>
-        <input type="email" id="studentEmail" placeholder="Email" required>
-        <input type="password" id="studentPassword" placeholder="Password" required>
+    <!-- Summary Cards -->
+    <section class="summary-cards">
+        <div class="card staff-card">
+            <h2>Total Staff</h2>
+            <p id="total-staff">0</p>
+        </div>
+        <div class="card student-card">
+            <h2>Total Students</h2>
+            <p id="total-students">0</p>
+        </div>
+    </section>
 
-        <select id="studentClass" required>
-            <option value="">Select Class</option>
-            <option>Year 7</option>
-            <option>Year 8</option>
-            <option>Year 9</option>
-            <option>Year 10</option>
-        </select>
+    <!-- Staff Directory -->
+    <section class="staff-list">
+        <h2>Staff Directory</h2>
+        <ul id="staff-ul">
+            <!-- Staff entries -->
+        </ul>
+    </section>
 
-        <button type="submit">Add Student</button>
-    </form>
-</div>
+    <!-- Student Directory -->
+    <section class="student-list">
+        <h2>Student Directory</h2>
+        <ul id="student-ul">
+            <!-- Student entries -->
+        </ul>
+    </section>
+
+    <!-- Action Buttons -->
+    <section class="actions">
+        <button onclick="location.href='register_teacher.html'">Register Teacher</button>
+        <button onclick="location.href='register_student.html'">Register Student</button>
+        <button onclick="logout()">Logout</button>
+    </section>
+
+</main>
 
 <script src="script.js"></script>
 </body>

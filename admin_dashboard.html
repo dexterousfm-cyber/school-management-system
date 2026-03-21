@@ -5,32 +5,19 @@
 <title>Admin Dashboard - ADUE Portal</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-.header { background-color:#722F37; padding:20px; color:white; display:flex; align-items:center; justify-content:space-between; }
-.header img { width:150px; height:150px; border-radius:50%; border:3px solid white; margin-right:20px; }
-#welcome { color:white; font-size:24px; margin:0; }
-.logout-btn { background-color:white; color:#722F37; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; }
-.logout-btn:hover { opacity:0.9; }
-.dashboard-buttons { margin:20px 0; }
-.dashboard-buttons button { padding:10px 20px; margin-right:10px; border:none; background:#722F37; color:white; border-radius:6px; cursor:pointer; font-size:16px; }
-.dashboard-buttons button:hover { opacity:0.9; }
+.header { background:#722F37; padding:20px; color:white; display:flex; justify-content:space-between; align-items:center; }
+.logout-btn { background:white; color:#722F37; padding:8px 16px; border:none; border-radius:6px; cursor:pointer; }
+.dashboard-buttons button { padding:10px 20px; margin:10px; background:#722F37; color:white; border:none; border-radius:6px; cursor:pointer; }
 table { width:100%; border-collapse:collapse; margin-top:20px; }
-th, td { border:1px solid #ccc; padding:10px; text-align:center; }
+th,td { border:1px solid #ccc; padding:10px; text-align:center; }
 th { background:#eee; }
 img { border-radius:50%; }
-button.edit-btn, button.delete-btn { padding:5px 10px; border:none; background:#722F37; color:white; cursor:pointer; border-radius:5px; margin:2px; }
-button.edit-btn:hover, button.delete-btn:hover { opacity:0.9; }
 </style>
 </head>
 <body>
 
 <div class="header">
-    <div style="display:flex; align-items:center;">
-        <img src="admin-logo.png" alt="Admin Logo">
-        <div>
-            <h1 id="welcome">Welcome, Admin</h1>
-            <div>Email: <span id="adminEmailDisplay">admin@adue.com</span></div>
-        </div>
-    </div>
+    <h1>Admin Dashboard</h1>
     <button class="logout-btn" onclick="logout()">Logout</button>
 </div>
 
@@ -39,22 +26,18 @@ button.edit-btn:hover, button.delete-btn:hover { opacity:0.9; }
     <button onclick="window.location.href='register_student.html'">Register Student</button>
 </div>
 
-<h2>Teachers (Total: <span id="totalTeachers">0</span>)</h2>
-<table border="1" width="100%" id="teachersTable">
+<h2>Teachers</h2>
+<table id="teachersTable">
 <thead>
-<tr>
-<th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Actions</th>
-</tr>
+<tr><th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th></tr>
 </thead>
 <tbody></tbody>
 </table>
 
-<h2>Students (Total: <span id="totalStudents">0</span>)</h2>
-<table border="1" width="100%" id="studentsTable">
+<h2>Students</h2>
+<table id="studentsTable">
 <thead>
-<tr>
-<th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Actions</th>
-</tr>
+<tr><th>Picture</th><th>Name</th><th>Email</th><th>ID</th><th>Class</th><th>Year</th><th>Result</th></tr>
 </thead>
 <tbody></tbody>
 </table>
@@ -63,76 +46,31 @@ button.edit-btn:hover, button.delete-btn:hover { opacity:0.9; }
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// Counters
-document.getElementById('totalTeachers').innerText = teachers.length;
-document.getElementById('totalStudents').innerText = students.length;
+function renderAdminTables(){
+    let tBody = document.querySelector("#teachersTable tbody");
+    tBody.innerHTML = "";
+    teachers.forEach(t=>{
+        tBody.innerHTML += `<tr>
+            <td><img src="${t.profilePicture||'default-teacher.png'}" width="70" height="70"></td>
+            <td>${t.name}</td><td>${t.email}</td><td>${t.teacherID}</td><td>${t.department}</td>
+        </tr>`;
+    });
 
-// Populate teachers table
-let tBody = document.querySelector('#teachersTable tbody');
-tBody.innerHTML = '';
-teachers.forEach((t,index)=>{
-    tBody.innerHTML += `
-    <tr>
-        <td><img src="${t.profilePicture || 'default-teacher.png'}" width="70" height="70"></td>
-        <td>${t.name}</td>
-        <td>${t.email}</td>
-        <td>${t.teacherID}</td>
-        <td>${t.department}</td>
-        <td>
-            <button class="edit-btn" onclick="editTeacher(${index})">Edit</button>
-            <button class="delete-btn" onclick="deleteTeacher(${index})">Delete</button>
-        </td>
-    </tr>`;
-});
-
-// Populate students table
-let sBody = document.querySelector('#studentsTable tbody');
-sBody.innerHTML = '';
-students.forEach((s,index)=>{
-    sBody.innerHTML += `
-    <tr>
-        <td><img src="${s.profilePicture || 'default-student.png'}" width="70" height="70"></td>
-        <td>${s.name}</td>
-        <td>${s.email}</td>
-        <td>${s.studentID}</td>
-        <td>${s.studentClass}</td>
-        <td>${s.studentYear}</td>
-        <td>
-            <button class="edit-btn" onclick="editStudent(${index})">Edit</button>
-            <button class="delete-btn" onclick="deleteStudent(${index})">Delete</button>
-        </td>
-    </tr>`;
-});
-
-// Functions
-function logout(){ localStorage.removeItem('currentAdminEmail'); window.location.href="index.html"; }
-
-function editTeacher(index){
-    let t = teachers[index];
-    let newName = prompt("Edit Name:", t.name); if(newName) t.name=newName;
-    let newEmail = prompt("Edit Email:", t.email); if(newEmail) t.email=newEmail;
-    let newDept = prompt("Edit Department:", t.department); if(newDept) t.department=newDept;
-    localStorage.setItem('teachers', JSON.stringify(teachers));
-    location.reload();
+    let sBody = document.querySelector("#studentsTable tbody");
+    sBody.innerHTML = "";
+    students.forEach(s=>{
+        sBody.innerHTML += `<tr>
+            <td><img src="${s.profilePicture||'default-student.png'}" width="70" height="70"></td>
+            <td>${s.name}</td><td>${s.email}</td><td>${s.studentID}</td><td>${s.studentClass}</td><td>${s.studentYear}</td><td>${s.result||''}</td>
+        </tr>`;
+    });
 }
+renderAdminTables();
 
-function deleteTeacher(index){
-    if(confirm("Delete this teacher?")){ teachers.splice(index,1); localStorage.setItem('teachers', JSON.stringify(teachers)); location.reload();}
-}
-
-function editStudent(index){
-    let s = students[index];
-    let newName = prompt("Edit Name:", s.name); if(newName)s.name=newName;
-    let newEmail = prompt("Edit Email:", s.email); if(newEmail)s.email=newEmail;
-    let newClass = prompt("Edit Class:", s.studentClass); if(newClass)s.studentClass=newClass;
-    let newYear = prompt("Edit Year:", s.studentYear); if(newYear)s.studentYear=newYear;
-    localStorage.setItem('students', JSON.stringify(students));
-    location.reload();
-}
-
-function deleteStudent(index){
-    if(confirm("Delete this student?")){ students.splice(index,1); localStorage.setItem('students', JSON.stringify(students)); location.reload();}
+function logout(){
+    window.location.href='index.html';
 }
 </script>
+
 </body>
 </html>

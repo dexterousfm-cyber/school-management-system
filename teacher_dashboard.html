@@ -1,33 +1,76 @@
-<!-- Header with teacher picture -->
-<img id="teacherLogo" src="default-teacher.png" width="150" height="150" style="border-radius:50%; border:3px solid #722F37;">
-<span id="teacherNameDisplay"></span>
-<button onclick="logout()">Logout</button>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Teacher Dashboard - ADUE Portal</title>
+<link rel="stylesheet" href="styles.css">
+<style>
+.header { background-color:#722F37; padding:20px; color:white; display:flex; align-items:center; justify-content:space-between; }
+.header img { width:150px; height:150px; border-radius:50%; border:3px solid white; margin-right:20px; }
+.logout-btn { background-color:white; color:#722F37; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; }
+.logout-btn:hover { opacity:0.9; }
+#welcome { text-align:center; margin:20px; color:#722F37; font-size:20px; }
+table { width:100%; border-collapse:collapse; margin-top:20px; }
+th, td { border:1px solid #ccc; padding:10px; text-align:center; }
+th { background:#eee; }
+img { border-radius:50%; }
+</style>
+</head>
+<body>
 
-<!-- Students table -->
-<table id="teacherStudentsTable">
-<thead><tr><th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th></tr></thead>
+<div class="header">
+    <div style="display:flex; align-items:center;">
+        <img id="teacherLogo" src="default-teacher.png" alt="Teacher Logo">
+        <div>
+            <h1>Welcome, <span id="teacherNameDisplay"></span></h1>
+            <div>Email: <span id="teacherEmailDisplay"></span></div>
+        </div>
+    </div>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
+
+<h2>Your Students</h2>
+<table border="1" width="100%" id="teacherStudentsTable">
+<thead>
+<tr><th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th></tr>
+</thead>
 <tbody></tbody>
 </table>
 
 <script>
-// currentTeacherEmail from login
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let students = JSON.parse(localStorage.getItem('students')) || [];
+// Get the currently logged-in teacher from localStorage
 let currentTeacherEmail = localStorage.getItem('currentTeacherEmail');
-let teacher = teachers.find(t=>t.email===currentTeacherEmail);
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+let teacher = teachers.find(t => t.email === currentTeacherEmail);
 
+// Display teacher name and picture
 if(teacher){
     document.getElementById('teacherNameDisplay').innerText = teacher.name;
+    document.getElementById('teacherEmailDisplay').innerText = teacher.email;
     document.getElementById('teacherLogo').src = teacher.profilePicture || 'default-teacher.png';
+} else {
+    document.getElementById('teacherNameDisplay').innerText = 'Unknown';
 }
 
+// Display all students in table
+let students = JSON.parse(localStorage.getItem('students')) || [];
 let tbody = document.querySelector('#teacherStudentsTable tbody');
-students.forEach(s=>{
+students.forEach(s => {
     tbody.innerHTML += `<tr>
-        <td><img src="${s.profilePicture||'default-student.png'}" width="70" height="70" style="border-radius:50%;"></td>
-        <td>${s.name}</td><td>${s.email}</td><td>${s.studentID}</td><td>${s.studentClass}</td><td>${s.studentYear}</td>
+        <td><img src="${s.profilePicture || 'default-student.png'}" width="70" height="70"></td>
+        <td>${s.name}</td>
+        <td>${s.email}</td>
+        <td>${s.studentID}</td>
+        <td>${s.studentClass}</td>
+        <td>${s.studentYear}</td>
     </tr>`;
 });
 
-function logout(){ window.location.href="index.html"; }
+function logout(){
+    localStorage.removeItem('currentTeacherEmail');
+    window.location.href = "index.html";
+}
 </script>
+
+</body>
+</html>

@@ -6,70 +6,105 @@
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-<h1>Welcome, <span id="adminName"></span></h1>
-<img id="adminPic" src="admin.png" width="100" style="border-radius:50%">
 
-<button onclick="window.location.href='register_teacher.html'">Register Teacher</button>
-<button onclick="window.location.href='register_student.html'">Register Student</button>
+<div class="header">
+    <div class="header-content">
+        <img src="logo-new.png" class="logo-header" alt="School Logo">
+        <h1>ADUE International School</h1>
+    </div>
+</div>
 
-<h2>Teachers List</h2>
-<table border="1" id="teachersTable">
-<tr><th>Picture</th><th>Name</th><th>Email</th><th>ID</th><th>Department</th><th>Edit</th></tr>
-</table>
+<div class="dashboard-wrapper">
 
-<h2>Students List</h2>
-<table border="1" id="studentsTable">
-<tr><th>Picture</th><th>Name</th><th>Email</th><th>ID</th><th>Class</th><th>Year</th><th>Edit</th></tr>
-</table>
+    <div class="admin-info">
+        <img id="adminPic" src="admin.png" width="100" style="border-radius:50%">
+        <h2>Welcome, <span id="adminName"></span></h2>
+    </div>
+
+    <div class="actions">
+        <button onclick="window.location.href='register_teacher.html'">Register Teacher</button>
+        <button onclick="window.location.href='register_student.html'">Register Student</button>
+    </div>
+
+    <h2>Teachers List</h2>
+    <table id="teachersTable" border="1">
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>ID</th>
+            <th>Department</th>
+            <th>Edit</th>
+        </tr>
+    </table>
+
+    <h2>Students List</h2>
+    <table id="studentsTable" border="1">
+        <tr>
+            <th>Picture</th>
+            <th>Name</th>
+            <th>Email</th>
+            <th>ID</th>
+            <th>Class</th>
+            <th>Year</th>
+            <th>Edit</th>
+        </tr>
+    </table>
+
+</div>
 
 <script>
-let admins = JSON.parse(localStorage.getItem('admins')) || [];
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let students = JSON.parse(localStorage.getItem('students')) || [];
-let currentAdminIndex = parseInt(localStorage.getItem("currentAdminIndex"));
+    // Load localStorage
+    let admins = JSON.parse(localStorage.getItem('admins')) || [];
+    let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+    let students = JSON.parse(localStorage.getItem('students')) || [];
+    let currentAdminIndex = parseInt(localStorage.getItem("currentAdminIndex")) || 0;
 
-// Display admin info
-document.getElementById("adminName").innerText = admins[currentAdminIndex].name;
-document.getElementById("adminPic").src = admins[currentAdminIndex].profilePicture || 'admin.png';
+    // Display admin info
+    const admin = admins[currentAdminIndex];
+    document.getElementById("adminName").innerText = admin.name;
+    document.getElementById("adminPic").src = admin.profilePicture || "admin.png";
 
-// Populate Teachers Table
-const teachersTable = document.getElementById("teachersTable");
-teachers.forEach((t,i)=>{
-    let row = teachersTable.insertRow();
-    row.innerHTML = `
-        <td><img src="${t.profilePicture || 'default.png'}" width="50" style="border-radius:50%"></td>
-        <td>${t.name}</td>
-        <td>${t.email}</td>
-        <td>${t.teacherID}</td>
-        <td>${t.department}</td>
-        <td><button onclick="editTeacher(${i})">Edit</button></td>
-    `;
-});
+    // Populate Teachers Table
+    const teachersTable = document.getElementById("teachersTable");
+    teachers.forEach((t,i)=>{
+        const row = teachersTable.insertRow();
+        row.innerHTML = `
+            <td><img src="${t.profilePicture || 'default.png'}" width="50" style="border-radius:50%"></td>
+            <td>${t.name}</td>
+            <td>${t.email}</td>
+            <td>${t.teacherID}</td>
+            <td>${t.department}</td>
+            <td><button onclick="editTeacher(${i})">Edit</button></td>
+        `;
+    });
 
-// Populate Students Table
-const studentsTable = document.getElementById("studentsTable");
-students.forEach((s,i)=>{
-    let row = studentsTable.insertRow();
-    row.innerHTML = `
-        <td><img src="${s.profilePicture || 'default.png'}" width="50" style="border-radius:50%"></td>
-        <td>${s.name}</td>
-        <td>${s.email}</td>
-        <td>${s.studentID}</td>
-        <td>${s.studentClass}</td>
-        <td>${s.studentYear}</td>
-        <td><button onclick="editStudent(${i})">Edit</button></td>
-    `;
-});
+    // Populate Students Table
+    const studentsTable = document.getElementById("studentsTable");
+    students.forEach((s,i)=>{
+        const row = studentsTable.insertRow();
+        row.innerHTML = `
+            <td><img src="${s.profilePicture || 'default.png'}" width="50" style="border-radius:50%"></td>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td>${s.studentID}</td>
+            <td>${s.studentClass}</td>
+            <td>${s.studentYear}</td>
+            <td><button onclick="editStudent(${i})">Edit</button></td>
+        `;
+    });
 
-// Edit Functions
-function editTeacher(index){
-    localStorage.setItem("editTeacherIndex", index);
-    window.location.href = "edit_teacher.html";
-}
-function editStudent(index){
-    localStorage.setItem("editStudentIndex", index);
-    window.location.href = "edit_student.html";
-}
+    // Edit functions
+    function editTeacher(index){
+        localStorage.setItem("editTeacherIndex", index);
+        window.location.href = "edit_teacher.html";
+    }
+
+    function editStudent(index){
+        localStorage.setItem("editStudentIndex", index);
+        window.location.href = "edit_student.html";
+    }
 </script>
+
 </body>
 </html>

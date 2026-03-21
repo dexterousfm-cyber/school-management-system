@@ -41,7 +41,7 @@ button.delete:hover { background:#a00000; }
 </div>
 
 <div class="container">
-    <button class="primary" onclick="openStudentForm()">Register Student</button>
+    <button class="primary" onclick="registerStudent()">Register Student</button>
     <button class="primary" onclick="renderStudentsTable()">View Students</button>
 
     <table id="studentsTable"></table>
@@ -75,7 +75,7 @@ let editIndex = null;
 
 // ---------- STUDENT FUNCTIONS ----------
 function renderStudentsTable() {
-    // ALWAYS fetch latest from localStorage
+    // ALWAYS fetch latest students from localStorage
     students = JSON.parse(localStorage.getItem('students')) || []; 
 
     const table = document.getElementById('studentsTable');
@@ -95,16 +95,18 @@ function renderStudentsTable() {
     table.innerHTML = html;
 }
 
-function openStudentForm() {
+function registerStudent() {
     let name = prompt("Student Name:");
     let email = prompt("Email:");
-    let id = prompt("Student ID:");
+    let studentID = prompt("Student ID:");
     let studentClass = prompt("Class:");
     let studentYear = prompt("Year:");
     let password = prompt("Password:");
 
-    students.push({name,email,studentID:id,studentClass,studentYear,password});
-    localStorage.setItem('students', JSON.stringify(students)); // shared with admin
+    // Fetch latest before adding
+    students = JSON.parse(localStorage.getItem('students')) || [];
+    students.push({name,email,studentID,studentClass,studentYear,password});
+    localStorage.setItem('students', JSON.stringify(students));
     renderStudentsTable();
 }
 

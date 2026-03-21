@@ -3,28 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <title>Teacher Dashboard</title>
-<style>
-body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
-.header { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#800000; color:white; }
-.header .logo img { width:120px; height:auto; object-fit:contain; }
-.header .profile { display:flex; align-items:center; gap:10px; }
-.header .profile img { width:40px; height:40px; border-radius:50%; border:1px solid white; object-fit:cover; }
-.header .profile span { font-weight:bold; }
-.container { padding:30px; }
-button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-button.primary { background:#800000; color:white; }
-button.primary:hover { background:#a00000; }
-table { width:100%; border-collapse:collapse; margin-top:20px; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.15); }
-th, td { padding:12px; text-align:center; border:1px solid #ddd; }
-th { background:#800000; color:white; }
-img.avatar-small { width:50px; height:50px; border-radius:50%; object-fit:cover; }
-table tr:hover { background:#fff2f2; }
-
-/* Modal */
-.modal { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); justify-content:center; align-items:center; }
-.modal-content { background:white; padding:20px; border-radius:10px; width:400px; }
-.modal-content input { width:100%; padding:5px; margin:5px 0; }
-</style>
+<link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -40,7 +19,7 @@ table tr:hover { background:#fff2f2; }
 
 <div class="container">
 
-    <!-- Action Buttons -->
+    <!-- Actions -->
     <div class="actions">
         <button class="primary" onclick="openStudentForm()">Register Student</button>
         <button class="primary" onclick="renderStudentsTable()">View Students</button>
@@ -67,6 +46,7 @@ table tr:hover { background:#fff2f2; }
   </div>
 </div>
 
+<script src="script.js"></script>
 <script>
 // Load data
 let students = JSON.parse(localStorage.getItem('students')) || [];
@@ -79,7 +59,7 @@ document.getElementById('teacherName').innerText = `Welcome ${currentTeacher.nam
 function openStudentForm(){ document.getElementById('studentModal').style.display='flex'; }
 function closeStudentForm(){ document.getElementById('studentModal').style.display='none'; }
 
-// Register student
+// Register student (linked to this teacher)
 function registerStudent(){
     let name = document.getElementById('studentNameInput').value;
     let email = document.getElementById('studentEmailInput').value;
@@ -119,7 +99,7 @@ function renderStudentsTable(){
     </tr>`;
     teacherStudents.forEach((s,i)=>{
         html += `<tr>
-            <td><img src="${s.profilePicture}" class="avatar-small"></td>
+            <td><img src="${s.profilePicture}" style="width:50px;height:50px;border-radius:50%;"></td>
             <td>${s.name}</td>
             <td>${s.email}</td>
             <td>${s.studentID}</td>

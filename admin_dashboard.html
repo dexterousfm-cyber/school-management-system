@@ -3,84 +3,187 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
+
 <style>
-body { font-family: Arial; background:#f5f5f5; }
-h2 { text-align:center; }
-button { padding:10px; margin:5px; }
-table { width:90%; margin:auto; border-collapse:collapse; }
-th, td { border:1px solid #ccc; padding:10px; text-align:center; }
-th { background:#800000; color:white; }
+body {
+    font-family: Arial;
+    background: #f5f5f5;
+    margin: 0;
+}
+
+.header {
+    background: #800000;
+    color: white;
+    padding: 15px;
+    text-align: center;
+}
+
+.container {
+    text-align: center;
+    margin-top: 20px;
+}
+
+button {
+    padding: 10px 15px;
+    margin: 5px;
+    border: none;
+    background: #800000;
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+button:hover {
+    background: #a00000;
+}
+
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: white;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: center;
+}
+
+th {
+    background: #800000;
+    color: white;
+}
 </style>
 </head>
+
 <body>
 
-<h2>Admin Dashboard</h2>
+<div class="header">
+    <h2>Admin Dashboard</h2>
+</div>
 
-<div style="text-align:center;">
-<button onclick="showTeachers()">Show Teachers</button>
-<button onclick="showStudents()">Show Students</button>
-<button onclick="registerTeacher()">Add Teacher</button>
-<button onclick="registerStudent()">Add Student</button>
-<button onclick="logout()">Logout</button>
+<div class="container">
+    <button onclick="showTeachers()">Show Teachers</button>
+    <button onclick="showStudents()">Show Students</button>
+    <button onclick="registerTeacher()">Add Teacher</button>
+    <button onclick="registerStudent()">Add Student</button>
+    <button onclick="logout()">Logout</button>
 </div>
 
 <table id="table"></table>
 
 <script>
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// Show Teachers
+// -------- GET DATA (Always fresh) --------
+function getTeachers(){
+    return JSON.parse(localStorage.getItem('teachers')) || [];
+}
+
+function getStudents(){
+    return JSON.parse(localStorage.getItem('students')) || [];
+}
+
+// -------- SHOW TEACHERS --------
 function showTeachers(){
-let html = `<tr><th>Name</th><th>Email</th><th>ID</th></tr>`;
-teachers.forEach(t=>{
-html += `<tr><td>${t.name}</td><td>${t.email}</td><td>${t.teacherID}</td></tr>`;
-});
-document.getElementById("table").innerHTML = html;
+    let teachers = getTeachers();
+
+    let html = `
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Teacher ID</th>
+    </tr>
+    `;
+
+    teachers.forEach(t=>{
+        html += `
+        <tr>
+            <td>${t.name}</td>
+            <td>${t.email}</td>
+            <td>${t.teacherID}</td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("table").innerHTML = html;
 }
 
-// Show Students
+// -------- SHOW STUDENTS --------
 function showStudents(){
-let html = `<tr><th>Name</th><th>Email</th><th>ID</th></tr>`;
-students.forEach(s=>{
-html += `<tr><td>${s.name}</td><td>${s.email}</td><td>${s.studentID}</td></tr>`;
-});
-document.getElementById("table").innerHTML = html;
+    let students = getStudents();
+
+    let html = `
+    <tr>
+        <th>Name</th>
+        <th>Email</th>
+        <th>Student ID</th>
+    </tr>
+    `;
+
+    students.forEach(s=>{
+        html += `
+        <tr>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td>${s.studentID}</td>
+        </tr>
+        `;
+    });
+
+    document.getElementById("table").innerHTML = html;
 }
 
-// Register Teacher
+// -------- ADD TEACHER --------
 function registerTeacher(){
-let name = prompt("Name:");
-let email = prompt("Email:");
-let id = prompt("Teacher ID:");
-let password = prompt("Password:");
+    let teachers = getTeachers();
 
-teachers.push({name,email,teacherID:id,password});
-localStorage.setItem('teachers', JSON.stringify(teachers));
+    let name = prompt("Enter Teacher Name:");
+    let email = prompt("Enter Email:");
+    let id = prompt("Enter Teacher ID:");
+    let password = prompt("Enter Password:");
 
-alert("Teacher added");
+    if(!name || !email || !id || !password){
+        alert("All fields required!");
+        return;
+    }
+
+    teachers.push({name, email, teacherID:id, password});
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+
+    alert("Teacher Added Successfully");
+    showTeachers();
 }
 
-// Register Student
+// -------- ADD STUDENT --------
 function registerStudent(){
-let name = prompt("Name:");
-let email = prompt("Email:");
-let id = prompt("Student ID:");
-let password = prompt("Password:");
+    let students = getStudents();
 
-students.push({name,email,studentID:id,password});
-localStorage.setItem('students', JSON.stringify(students));
+    let name = prompt("Enter Student Name:");
+    let email = prompt("Enter Email:");
+    let id = prompt("Enter Student ID:");
+    let password = prompt("Enter Password:");
 
-alert("Student added");
+    if(!name || !email || !id || !password){
+        alert("All fields required!");
+        return;
+    }
+
+    students.push({name, email, studentID:id, password});
+    localStorage.setItem('students', JSON.stringify(students));
+
+    alert("Student Added Successfully");
+    showStudents();
 }
 
-// Logout
+// -------- LOGOUT --------
 function logout(){
-window.location.href = "index.html";
+    window.location.href = "index.html";
 }
 
-// Load default
+// -------- INITIAL LOAD --------
 showTeachers();
+
 </script>
 
 </body>

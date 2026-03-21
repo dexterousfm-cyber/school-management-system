@@ -5,12 +5,12 @@
 <title>ADUE Admin Dashboard</title>
 <link rel="stylesheet" href="styles.css">
 <style>
-/* Header styling */
+/* Header */
 .header {
-    background-color: #722F37; /* wine color */
+    background-color: #722F37; /* wine */
     padding: 20px;
     text-align: center;
-    color: white; /* ADUE Admin Dashboard in white */
+    color: white; /* ADUE Admin Dashboard text in white */
 }
 .header img {
     height: 50px;
@@ -27,84 +27,81 @@
 .dashboard-cards {
     display: flex;
     justify-content: space-around;
-    margin: 30px 10px;
-    flex-wrap: wrap;
+    margin: 20px 0;
 }
 .card {
     background-color: #fff;
-    border-radius: 12px;
     padding: 20px;
-    width: 200px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
     text-align: center;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    margin: 10px;
+    flex: 1;
+    margin: 0 10px;
 }
 .card h2 {
-    color: #722F37;
-    font-size: 20px;
     margin-bottom: 10px;
+    color: #722F37;
 }
 .card p {
     font-size: 28px;
     font-weight: bold;
 }
 
-/* Lists */
-.list-wrapper {
-    max-width: 900px;
-    margin: 30px auto;
+/* Table */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
-.list-wrapper h3 {
-    color: #722F37;
-    margin-bottom: 15px;
+th, td {
+    padding: 12px;
+    border: 1px solid #ccc;
+    text-align: left;
 }
-.list-item {
-    display: flex;
-    justify-content: space-between;
-    background-color: #fff;
-    padding: 12px 20px;
-    margin-bottom: 10px;
-    border-radius: 8px;
-    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
-}
-.list-item span {
-    font-size: 16px;
-}
-.list-item button {
+th {
     background-color: #722F37;
     color: white;
+}
+td button {
+    margin-right: 5px;
+    padding: 5px 10px;
     border: none;
-    padding: 6px 12px;
     border-radius: 6px;
     cursor: pointer;
 }
-.list-item button:hover {
-    opacity: 0.9;
+.delete-btn {
+    background-color: #d9534f;
+    color: white;
+}
+.edit-btn {
+    background-color: #5bc0de;
+    color: white;
 }
 
-/* Logout button */
+/* Logout */
 .logout-btn {
-    display: block;
-    width: 120px;
-    margin: 20px auto;
-    padding: 12px;
-    background-color: #722F37;
-    color: white;
-    border: none;
+    background-color: #fff;
+    color: #722F37;
+    border: 1px solid #722F37;
+    padding: 8px 16px;
     border-radius: 8px;
-    font-size: 16px;
     cursor: pointer;
+    float: right;
+    margin: 10px;
 }
 .logout-btn:hover {
-    opacity: 0.9;
+    background-color: #722F37;
+    color: white;
 }
 </style>
 </head>
 <body>
 
+<!-- Header -->
 <div class="header">
     <img src="logo-new.png" alt="Logo">
     <h1>ADUE Admin Dashboard</h1>
+    <button class="logout-btn" id="logoutBtn">Logout</button>
 </div>
 
 <!-- Dashboard cards -->
@@ -119,90 +116,143 @@
     </div>
 </div>
 
-<!-- Teachers list -->
-<div class="list-wrapper">
-    <h3>Registered Teachers</h3>
-    <div id="teacherList"></div>
-</div>
+<!-- Teachers Table -->
+<h2 style="color:#722F37; margin-left:20px;">Teachers</h2>
+<table id="teachersTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>ID</th>
+            <th>Department</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Teacher rows go here -->
+    </tbody>
+</table>
 
-<!-- Students list -->
-<div class="list-wrapper">
-    <h3>Registered Students</h3>
-    <div id="studentList"></div>
-</div>
-
-<button class="logout-btn" id="logoutBtn">Logout</button>
+<!-- Students Table -->
+<h2 style="color:#722F37; margin-left:20px;">Students</h2>
+<table id="studentsTable">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>ID</th>
+            <th>Year/Class</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        <!-- Student rows go here -->
+    </tbody>
+</table>
 
 <script>
-// Fetch data from localStorage or initialize
-let teachers = JSON.parse(localStorage.getItem("teachers")) || [];
-let students = JSON.parse(localStorage.getItem("students")) || [];
+// Fetch stored teachers and students
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// Display total counts
-function updateTotals() {
-    document.getElementById("totalTeachers").textContent = teachers.length;
-    document.getElementById("totalStudents").textContent = students.length;
+// Update counts
+function updateCounts() {
+    document.getElementById('totalTeachers').textContent = teachers.length;
+    document.getElementById('totalStudents').textContent = students.length;
 }
 
-// Render teachers
-function renderTeachers() {
-    const teacherList = document.getElementById("teacherList");
-    teacherList.innerHTML = "";
-    teachers.forEach((teacher, index) => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.innerHTML = `
-            <span>${teacher.name} (${teacher.email}) - ${teacher.department}</span>
-            <button onclick="deleteTeacher(${index})">Delete</button>
+// Populate Teachers Table
+function populateTeachers() {
+    const tbody = document.getElementById('teachersTable').querySelector('tbody');
+    tbody.innerHTML = '';
+    teachers.forEach((t, index) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${t.name}</td>
+                <td>${t.email}</td>
+                <td>${t.teacherID}</td>
+                <td>${t.department}</td>
+                <td>
+                    <button class="edit-btn" onclick="editTeacher(${index})">Edit</button>
+                    <button class="delete-btn" onclick="deleteTeacher(${index})">Delete</button>
+                </td>
+            </tr>
         `;
-        teacherList.appendChild(div);
     });
 }
 
-// Render students
-function renderStudents() {
-    const studentList = document.getElementById("studentList");
-    studentList.innerHTML = "";
-    students.forEach((student, index) => {
-        const div = document.createElement("div");
-        div.className = "list-item";
-        div.innerHTML = `
-            <span>${student.name} (${student.email}) - ${student.year} - ${student.class}</span>
-            <button onclick="deleteStudent(${index})">Delete</button>
+// Populate Students Table
+function populateStudents() {
+    const tbody = document.getElementById('studentsTable').querySelector('tbody');
+    tbody.innerHTML = '';
+    students.forEach((s, index) => {
+        tbody.innerHTML += `
+            <tr>
+                <td>${s.name}</td>
+                <td>${s.email}</td>
+                <td>${s.studentID}</td>
+                <td>${s.year}</td>
+                <td>
+                    <button class="edit-btn" onclick="editStudent(${index})">Edit</button>
+                    <button class="delete-btn" onclick="deleteStudent(${index})">Delete</button>
+                </td>
+            </tr>
         `;
-        studentList.appendChild(div);
     });
 }
 
 // Delete functions
 function deleteTeacher(index) {
-    if(confirm("Are you sure you want to delete this teacher?")) {
-        teachers.splice(index, 1);
-        localStorage.setItem("teachers", JSON.stringify(teachers));
-        renderTeachers();
-        updateTotals();
+    if(confirm("Delete this teacher?")) {
+        teachers.splice(index,1);
+        localStorage.setItem('teachers', JSON.stringify(teachers));
+        updateCounts();
+        populateTeachers();
+    }
+}
+function deleteStudent(index) {
+    if(confirm("Delete this student?")) {
+        students.splice(index,1);
+        localStorage.setItem('students', JSON.stringify(students));
+        updateCounts();
+        populateStudents();
     }
 }
 
-function deleteStudent(index) {
-    if(confirm("Are you sure you want to delete this student?")) {
-        students.splice(index, 1);
-        localStorage.setItem("students", JSON.stringify(students));
-        renderStudents();
-        updateTotals();
-    }
+// Edit functions
+function editTeacher(index){
+    const t = teachers[index];
+    const newName = prompt("Enter new name:", t.name) || t.name;
+    const newEmail = prompt("Enter new email:", t.email) || t.email;
+    const newID = prompt("Enter new Teacher ID:", t.teacherID) || t.teacherID;
+    const newDept = prompt("Enter new department:", t.department) || t.department;
+
+    teachers[index] = { ...t, name: newName, email: newEmail, teacherID: newID, department: newDept };
+    localStorage.setItem('teachers', JSON.stringify(teachers));
+    populateTeachers();
+}
+
+function editStudent(index){
+    const s = students[index];
+    const newName = prompt("Enter new name:", s.name) || s.name;
+    const newEmail = prompt("Enter new email:", s.email) || s.email;
+    const newID = prompt("Enter new Student ID:", s.studentID) || s.studentID;
+    const newYear = prompt("Enter new Year/Class:", s.year) || s.year;
+
+    students[index] = { ...s, name: newName, email: newEmail, studentID: newID, year: newYear };
+    localStorage.setItem('students', JSON.stringify(students));
+    populateStudents();
 }
 
 // Logout
-document.getElementById("logoutBtn").addEventListener("click", function() {
-    alert("Logged out successfully!");
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
     window.location.href = "index.html";
 });
 
-// Initial render
-updateTotals();
-renderTeachers();
-renderStudents();
+// Initial population
+updateCounts();
+populateTeachers();
+populateStudents();
 </script>
 
 </body>

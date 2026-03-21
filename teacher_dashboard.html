@@ -7,12 +7,15 @@
 <style>
 .header { background-color:#722F37; padding:20px; color:white; display:flex; align-items:center; justify-content:space-between; }
 .header img { width:150px; height:150px; border-radius:50%; border:3px solid white; margin-right:20px; }
+#welcome { color:white; font-size:24px; margin:0; }
 .logout-btn { background-color:white; color:#722F37; border:none; padding:8px 16px; border-radius:6px; cursor:pointer; font-weight:bold; }
 .logout-btn:hover { opacity:0.9; }
 table { width:100%; border-collapse:collapse; margin-top:20px; }
 th, td { border:1px solid #ccc; padding:10px; text-align:center; }
 th { background:#eee; }
 img { border-radius:50%; }
+button { padding:5px 10px; border:none; background:#722F37; color:white; cursor:pointer; border-radius:5px; }
+button:hover { opacity:0.9; }
 </style>
 </head>
 <body>
@@ -21,7 +24,7 @@ img { border-radius:50%; }
     <div style="display:flex; align-items:center;">
         <img id="teacherLogo" src="default-teacher.png" alt="Teacher Logo">
         <div>
-            <h1>Welcome, <span id="teacherNameDisplay"></span></h1>
+            <h1 id="welcome">Welcome, </h1>
             <div>Email: <span id="teacherEmailDisplay"></span></div>
         </div>
     </div>
@@ -33,20 +36,19 @@ img { border-radius:50%; }
 <thead>
 <tr>
 <th>Student Picture</th>
-<th>Student Name</th>
-<th>Student Email</th>
+<th>Name</th>
+<th>Email</th>
 <th>Student ID</th>
 <th>Class</th>
 <th>Year</th>
-<th>Teacher Picture</th>
-<th>Teacher Name</th>
+<th>Actions</th>
 </tr>
 </thead>
 <tbody></tbody>
 </table>
 
 <script>
-// --- Get the currently logged-in teacher ---
+// --- Get currently logged-in teacher ---
 let currentTeacherEmail = localStorage.getItem('currentTeacherEmail');
 if(!currentTeacherEmail){
     alert("You are not logged in!");
@@ -56,15 +58,15 @@ if(!currentTeacherEmail){
 let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
 let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// --- Find the teacher object ---
+// --- Find teacher object ---
 let teacher = teachers.find(t => t.email === currentTeacherEmail);
 if(!teacher){
     alert("Teacher not found!");
     window.location.href = "index.html";
 }
 
-// --- Display teacher info ---
-document.getElementById('teacherNameDisplay').innerText = teacher.name;
+// --- Display teacher info at top ---
+document.getElementById('welcome').innerText = `Welcome, ${teacher.name}`;
 document.getElementById('teacherEmailDisplay').innerText = teacher.email;
 document.getElementById('teacherLogo').src = teacher.profilePicture || 'default-teacher.png';
 
@@ -72,7 +74,10 @@ document.getElementById('teacherLogo').src = teacher.profilePicture || 'default-
 let tbody = document.querySelector('#teacherStudentsTable tbody');
 tbody.innerHTML = '';
 
-students.forEach(s => {
+students.forEach((s, index) => {
+    // Show only students assigned to this teacher (optional: remove filter if teacher sees all)
+    if(!s.teacherID || s.teacherID !== teacher.teacherID) return;
+
     tbody.innerHTML += `
     <tr>
         <td><img src="${s.profilePicture || 'default-student.png'}" width="70" height="70"></td>
@@ -81,15 +86,31 @@ students.forEach(s => {
         <td>${s.studentID}</td>
         <td>${s.studentClass}</td>
         <td>${s.studentYear}</td>
-        <td><img src="${teacher.profilePicture || 'default-teacher.png'}" width="70" height="70"></td>
-        <td>${teacher.name}</td>
+        <td><button onclick="editStudent(${index})">Edit</button></td>
     </tr>`;
 });
 
-// --- Logout function ---
+// --- Functions ---
 function logout(){
     localStorage.removeItem('currentTeacherEmail');
     window.location.href = "index.html";
+}
+
+// Edit student function
+function editStudent(index){
+    let s = students[index];
+    let newName = prompt("Edit Name:", s.name);
+    if(newName !== null && newName.trim() !== "") s.name = newName.trim();
+    let newEmail = prompt("Edit Email:", s.email);
+    if(newEmail !== null && newEmail.trim() !== "") s.email = newEmail.trim();
+    let newClass = prompt("Edit Class:", s.studentClass);
+    if(newClass !== null && newClass.trim() !== "") s.studentClass = newClass.trim();
+    let newYear = prompt("Edit Year:", s.studentYear);
+    if(newYear !== null && newYear.trim() !== "") s.studentYear = newYear.trim();
+
+    localStorage.setItem('students', JSON.stringify(students));
+    alert("Student details updated!");
+    location.reload();
 }
 </script>
 

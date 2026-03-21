@@ -3,114 +3,122 @@
 <head>
 <meta charset="UTF-8">
 <title>Admin Dashboard</title>
-<link rel="stylesheet" href="styles.css">
 <style>
-body { font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin:0; padding:0; background:#fffafc; }
-
+body { margin:0; font-family: Arial, sans-serif; background:#f5f5f5; }
 /* Header */
-.header { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#800000; color:white; box-shadow:0 2px 6px rgba(0,0,0,0.2);}
-.logo-section img { width:150px; height:auto; object-fit:contain; }
-.profile-section { display:flex; align-items:center; gap:10px; }
-.profile-section img.avatar { width:35px; height:35px; border-radius:50%; object-fit:cover; border:1px solid white; }
-#headerName { font-size:18px; font-weight:bold; }
-#logoutBtn { padding:6px 12px; background:white; color:#800000; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
-#logoutBtn:hover { background:#f0f0f0; }
-
+.header { display:flex; justify-content:space-between; align-items:center; padding:15px 30px; background:#800000; color:white; }
+.header .logo img { width:120px; height:auto; object-fit:contain; }
+.header .profile { display:flex; align-items:center; gap:10px; }
+.header .profile img { width:40px; height:40px; border-radius:50%; border:1px solid white; object-fit:cover; }
+.header .profile span { font-weight:bold; }
 /* Container */
-.container { padding:30px 50px; }
-
+.container { padding:30px; }
 /* Buttons */
-button.action-btn { padding:8px 16px; background:#800000; color:white; border:none; border-radius:6px; cursor:pointer; font-weight:bold; transition:0.3s; }
-button.action-btn:hover { background:#a00000; }
-
-/* Toggle buttons */
-.toggle-buttons { margin:20px 0; display:flex; gap:15px; }
-
+button { padding:8px 16px; margin:5px; border:none; border-radius:5px; cursor:pointer; font-weight:bold; }
+button.primary { background:#800000; color:white; }
+button.primary:hover { background:#a00000; }
 /* Tables */
-table { width:100%; border-collapse:collapse; margin-top:15px; background:white; border-radius:8px; overflow:hidden; box-shadow:0 2px 6px rgba(0,0,0,0.15);}
-table, th, td { border:1px solid #ddd; }
-th, td { padding:12px; text-align:center; }
-th { background:#800000; color:white; font-weight:bold; }
+table { width:100%; border-collapse:collapse; margin-top:20px; background:white; box-shadow:0 2px 5px rgba(0,0,0,0.15); }
+th, td { padding:12px; text-align:center; border:1px solid #ddd; }
+th { background:#800000; color:white; }
 img.avatar-small { width:50px; height:50px; border-radius:50%; object-fit:cover; }
 table tr:hover { background:#fff2f2; }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="header">
-    <div class="logo-section">
-        <img src="logo-new.png" alt="School Logo">
-    </div>
-    <div class="profile-section">
-        <img id="headerAvatar" src="admin.png" class="avatar">
-        <span id="headerName">Welcome Admin</span>
+    <div class="logo"><img src="logo-new.png" alt="Logo"></div>
+    <div class="profile">
+        <img src="admin.png" alt="Admin">
+        <span id="adminName">Welcome Admin</span>
         <button id="logoutBtn">Logout</button>
     </div>
 </div>
 
 <div class="container">
-
-    <!-- Register Buttons -->
-    <div class="register-buttons">
-        <button onclick="window.location.href='register_teacher.html'" class="action-btn">Register Teacher</button>
-        <button onclick="window.location.href='register_student.html'" class="action-btn">Register Student</button>
+    <div class="actions">
+        <button class="primary" onclick="alert('Register Teacher')">Register Teacher</button>
+        <button class="primary" onclick="alert('Register Student')">Register Student</button>
+        <button class="primary" onclick="showTable('teachers')">Show Teachers</button>
+        <button class="primary" onclick="showTable('students')">Show Students</button>
     </div>
 
-    <!-- Toggle Buttons -->
-    <div class="toggle-buttons">
-        <button class="action-btn" onclick="showTable('teachers')">Teachers</button>
-        <button class="action-btn" onclick="showTable('students')">Students</button>
-    </div>
-
-    <!-- Teachers Table -->
-    <table id="teachersTable">
-        <tr>
-            <th>Picture</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Teacher ID</th>
-            <th>Department</th>
-            <th>Edit</th>
-        </tr>
-    </table>
-
-    <!-- Students Table -->
-    <table id="studentsTable" style="display:none;">
-        <tr>
-            <th>Picture</th>
-            <th>Name</th>
-            <th>Email</th>
-            <th>Student ID</th>
-            <th>Class</th>
-            <th>Year</th>
-            <th>Edit</th>
-        </tr>
-    </table>
-
+    <table id="teachersTable"></table>
+    <table id="studentsTable" style="display:none;"></table>
 </div>
 
 <script>
+// Sample data
+let teachers = [
+    {profilePicture:'teacher.png', name:'John Doe', email:'john@example.com', teacherID:'T001', department:'Math'}
+];
+
+let students = [
+    {profilePicture:'student.png', name:'Jane Smith', email:'jane@example.com', studentID:'S001', studentClass:'JSS1', studentYear:'2026'}
+];
+
+// Render tables
+function renderTeachersTable(){
+    const table = document.getElementById('teachersTable');
+    let html = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Teacher ID</th><th>Department</th><th>Edit</th>
+    </tr>`;
+    teachers.forEach((t,i)=>{
+        html += `<tr>
+            <td><img src="${t.profilePicture}" class="avatar-small"></td>
+            <td>${t.name}</td>
+            <td>${t.email}</td>
+            <td>${t.teacherID}</td>
+            <td>${t.department}</td>
+            <td><button onclick="editTeacher(${i})">Edit</button></td>
+        </tr>`;
+    });
+    table.innerHTML = html;
+}
+
+function renderStudentsTable(){
+    const table = document.getElementById('studentsTable');
+    let html = `<tr>
+        <th>Picture</th><th>Name</th><th>Email</th><th>Student ID</th><th>Class</th><th>Year</th><th>Edit</th>
+    </tr>`;
+    students.forEach((s,i)=>{
+        html += `<tr>
+            <td><img src="${s.profilePicture}" class="avatar-small"></td>
+            <td>${s.name}</td>
+            <td>${s.email}</td>
+            <td>${s.studentID}</td>
+            <td>${s.studentClass}</td>
+            <td>${s.studentYear}</td>
+            <td><button onclick="editStudent(${i})">Edit</button></td>
+        </tr>`;
+    });
+    table.innerHTML = html;
+}
+
+// Edit buttons
+function editTeacher(i){ alert('Edit Teacher '+i); }
+function editStudent(i){ alert('Edit Student '+i); }
+
+// Toggle tables
+function showTable(table){
+    document.getElementById('teachersTable').style.display = (table==='teachers')?'':'none';
+    document.getElementById('studentsTable').style.display = (table==='students')?'':'none';
+}
+
+// Initial load
+renderTeachersTable();
+renderStudentsTable();
+showTable('teachers');
+
 // Logout
-document.getElementById('logoutBtn').addEventListener('click', function(){
-    localStorage.removeItem('currentAdminIndex');
-    window.location.href='index.html';
+document.getElementById('logoutBtn').addEventListener('click', ()=>{
+    alert('Logout clicked');
 });
+</script>
 
-// Load Admin Profile
-let currentAdminIndex = parseInt(localStorage.getItem('currentAdminIndex')) || 0;
-let admins = JSON.parse(localStorage.getItem('admins')) || [{name:'Admin', profilePicture:'admin.png'}];
-document.getElementById('headerName').innerText = 'Welcome ' + admins[currentAdminIndex].name;
-document.getElementById('headerAvatar').src = admins[currentAdminIndex].profilePicture;
-
-// Load Teachers
-let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
-let teachersTable = document.getElementById('teachersTable');
-teachers.forEach((t,i)=>{
-    let row = teachersTable.insertRow();
-    row.insertCell(0).innerHTML = `<img src="${t.profilePicture}" class="avatar-small">`;
-    row.insertCell(1).innerText = t.name;
-    row.insertCell(2).innerText = t.email;
+</body>
+</html>    row.insertCell(2).innerText = t.email;
     row.insertCell(3).innerText = t.teacherID;
     row.insertCell(4).innerText = t.department;
     row.insertCell(5).innerHTML = `<button class="action-btn" onclick="editTeacher(${i})">Edit</button>`;

@@ -20,36 +20,38 @@
         <input type="text" id="studentID" placeholder="Student ID" required>
         <input type="text" id="studentClass" placeholder="Class" required>
         <input type="text" id="studentYear" placeholder="Year" required>
-        <input type="text" id="teacherID" placeholder="Teacher ID" required>
         <input type="password" id="password" placeholder="Password" required>
-        <input type="file" id="profilePicture">
+        <input type="password" id="confirmPassword" placeholder="Confirm Password" required>
+        <input type="text" id="studentPicture" placeholder="Picture URL (optional)">
         <button type="submit">Register Student</button>
     </form>
-    <div class="links"><a href="admin_dashboard.html">Back to Dashboard</a></div>
+    <div class="links">
+        <a href="admin_dashboard.html">Back to Dashboard</a>
+    </div>
 </div>
 
 <script>
 let students = JSON.parse(localStorage.getItem('students')) || [];
+
 document.getElementById('studentForm').addEventListener('submit', function(e){
     e.preventDefault();
-    const name=document.getElementById('studentName').value;
-    const email=document.getElementById('studentEmail').value;
-    const studentID=document.getElementById('studentID').value;
-    const studentClass=document.getElementById('studentClass').value;
-    const studentYear=document.getElementById('studentYear').value;
-    const teacherID=document.getElementById('teacherID').value;
-    const password=document.getElementById('password').value;
-    const file=document.getElementById('profilePicture').files[0];
-    let reader=new FileReader();
-    reader.onload = function(){
-        students.push({name,email,studentID,studentClass,studentYear,teacherID,password,profilePicture: reader.result});
-        localStorage.setItem('students', JSON.stringify(students));
-        alert("Student registered!");
-        window.location.href='admin_dashboard.html';
-    };
-    if(file) reader.readAsDataURL(file);
-    else {students.push({name,email,studentID,studentClass,studentYear,teacherID,password,profilePicture:null}); localStorage.setItem('students',JSON.stringify(students)); alert("Student registered!"); window.location.href='admin_dashboard.html';}
+    const name = document.getElementById('studentName').value;
+    const email = document.getElementById('studentEmail').value;
+    const studentID = document.getElementById('studentID').value;
+    const studentClass = document.getElementById('studentClass').value;
+    const studentYear = document.getElementById('studentYear').value;
+    const password = document.getElementById('password').value;
+    const confirmPassword = document.getElementById('confirmPassword').value;
+    const profilePicture = document.getElementById('studentPicture').value;
+
+    if(password !== confirmPassword){ alert("Passwords do not match!"); return; }
+
+    students.push({name,email,studentID,studentClass,studentYear,password,profilePicture,result:'',subjects:[]});
+    localStorage.setItem('students', JSON.stringify(students));
+    alert("Student registered successfully!");
+    this.reset();
 });
 </script>
+
 </body>
 </html>

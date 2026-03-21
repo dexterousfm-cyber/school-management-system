@@ -88,11 +88,11 @@ table tr:hover { background:#fff2f2; }
 </div>
 
 <script>
-// Data arrays
-let teachers = [];
-let students = [];
+// Load data from localStorage or initialize arrays
+let teachers = JSON.parse(localStorage.getItem('teachers')) || [];
+let students = JSON.parse(localStorage.getItem('students')) || [];
 
-// Render Tables
+// ------------------- RENDER -------------------
 function renderTeachersTable(){
     const table = document.getElementById('teachersTable');
     let html = `<tr>
@@ -101,7 +101,6 @@ function renderTeachersTable(){
         <th>Email</th>
         <th>Teacher ID</th>
         <th>Department</th>
-        <th>Password</th>
         <th>Edit</th>
     </tr>`;
     teachers.forEach((t,i)=>{
@@ -111,7 +110,6 @@ function renderTeachersTable(){
             <td>${t.email}</td>
             <td>${t.teacherID}</td>
             <td>${t.department}</td>
-            <td>${t.password}</td>
             <td><button onclick="editTeacher(${i})">Edit</button></td>
         </tr>`;
     });
@@ -145,28 +143,28 @@ function renderStudentsTable(){
     table.innerHTML = html;
 }
 
-// Show/Hide Tables
+// ------------------- SHOW TABLE -------------------
 function showTable(table){
     document.getElementById('teachersTable').style.display = (table==='teachers')?'':'none';
     document.getElementById('studentsTable').style.display = (table==='students')?'':'none';
 }
 
-// Toggle Password Visibility
+// ------------------- TOGGLE PASSWORD -------------------
 function togglePassword(type){
     let input = (type==='teacher') ? document.getElementById('teacherPasswordInput') : document.getElementById('studentPasswordInput');
     input.type = (input.type === 'password') ? 'text' : 'password';
 }
 
-// Edit placeholders
+// ------------------- EDIT PLACEHOLDERS -------------------
 function editTeacher(i){ alert('Edit Teacher: '+teachers[i].name); }
 function editStudent(i){ alert('Edit Student: '+students[i].name); }
 
-// ---------------- LOGOUT ----------------
+// ------------------- LOGOUT -------------------
 function logout() {
     window.location.href = 'index.html'; // redirect to login page
 }
 
-// Teacher Form
+// ------------------- TEACHER FORM -------------------
 function openTeacherForm(){ document.getElementById('teacherModal').style.display='flex'; }
 function closeTeacherForm(){ document.getElementById('teacherModal').style.display='none'; }
 function registerTeacher(){
@@ -183,18 +181,20 @@ function registerTeacher(){
     reader.onload = function(e){
         let pic = e.target.result;
         teachers.push({profilePicture:pic,name,email,teacherID:id,department:dept,password});
+        localStorage.setItem('teachers', JSON.stringify(teachers));
         renderTeachersTable();
         closeTeacherForm();
     }
     if(file) reader.readAsDataURL(file);
     else {
         teachers.push({profilePicture:'teacher.png',name,email,teacherID:id,department:dept,password});
+        localStorage.setItem('teachers', JSON.stringify(teachers));
         renderTeachersTable();
         closeTeacherForm();
     }
 }
 
-// Student Form
+// ------------------- STUDENT FORM -------------------
 function openStudentForm(){ document.getElementById('studentModal').style.display='flex'; }
 function closeStudentForm(){ document.getElementById('studentModal').style.display='none'; }
 function registerStudent(){
@@ -212,18 +212,20 @@ function registerStudent(){
     reader.onload = function(e){
         let pic = e.target.result;
         students.push({profilePicture:pic,name,email,studentID:id,studentClass,studentYear:year,password});
+        localStorage.setItem('students', JSON.stringify(students));
         renderStudentsTable();
         closeStudentForm();
     }
     if(file) reader.readAsDataURL(file);
     else {
         students.push({profilePicture:'student.png',name,email,studentID:id,studentClass,studentYear:year,password});
+        localStorage.setItem('students', JSON.stringify(students));
         renderStudentsTable();
         closeStudentForm();
     }
 }
 
-// Initial load
+// ------------------- INITIAL LOAD -------------------
 renderTeachersTable();
 renderStudentsTable();
 showTable('teachers');

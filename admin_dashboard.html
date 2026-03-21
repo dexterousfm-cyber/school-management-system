@@ -2,56 +2,219 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Dashboard | ADUE</title>
+<title>ADUE Admin Dashboard</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+/* --- GENERAL RESET --- */
+body {
+    margin: 0;
+    font-family: 'Inter', sans-serif;
+    background-color: #fdfdfd;
+    color: #333;
+}
+
+/* --- HEADER --- */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background-color: #722F37;
+    padding: 10px 20px;
+    color: white;
+}
+.header img.logo-header {
+    height: 50px;
+}
+.header h1 {
+    font-size: 1.5rem;
+    margin: 0;
+}
+.logout-btn {
+    background-color: #fff;
+    color: #722F37;
+    border: none;
+    padding: 5px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+/* --- SUMMARY CARDS --- */
+.summary-cards {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    padding: 15px;
+}
+.card {
+    flex: 1 1 45%;
+    min-width: 150px;
+    background-color: white;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 3px 6px rgba(0,0,0,0.1);
+}
+.card.wine {
+    background-color: #722F37;
+    color: white;
+}
+.card h2 {
+    margin: 0 0 10px 0;
+    font-size: 1.2rem;
+}
+.card p {
+    font-size: 1.8rem;
+    margin: 0;
+}
+
+/* --- STAFF LIST --- */
+.section {
+    padding: 15px;
+}
+.section h3 {
+    margin-bottom: 10px;
+    color: #722F37;
+}
+.staff-list, .student-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.staff-card, .student-card {
+    display: flex;
+    align-items: center;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+    cursor: pointer;
+}
+.staff-card img, .student-card img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 12px;
+}
+.staff-card div, .student-card div {
+    flex: 1;
+}
+.staff-card p, .student-card p {
+    margin: 0;
+}
+
+/* --- NAVIGATION BAR --- */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #722F37;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+}
+.bottom-nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+/* --- RESPONSIVE --- */
+@media(max-width: 600px){
+    .summary-cards {
+        flex-direction: column;
+    }
+}
+</style>
 </head>
 <body>
 
-<header class="header">
-    <img src="logo-new.png" alt="ADUE Logo" class="logo">
-    <h1>Admin Dashboard</h1>
-</header>
+<!-- HEADER -->
+<div class="header">
+    <img src="logo-new.png" alt="Logo" class="logo-header">
+    <h1>ADUE Admin Dashboard</h1>
+    <button class="logout-btn" onclick="logout()">Logout</button>
+</div>
 
-<main class="dashboard">
+<!-- SUMMARY CARDS -->
+<div class="summary-cards">
+    <div class="card wine">
+        <h2>Total Staff</h2>
+        <p id="totalStaff">105</p>
+    </div>
+    <div class="card">
+        <h2>Total Students</h2>
+        <p id="totalStudents">2150</p>
+    </div>
+    <div class="card">
+        <h2>Total Classes</h2>
+        <p id="totalClasses">15</p>
+    </div>
+    <div class="card">
+        <h2>Total Subjects</h2>
+        <p id="totalSubjects">10</p>
+    </div>
+</div>
 
-    <!-- Summary Cards -->
-    <section class="summary-cards">
-        <div class="card staff-card">
-            <h2>Total Staff</h2>
-            <p id="total-staff">0</p>
+<!-- STAFF LIST -->
+<div class="section">
+    <h3>Staff / Teachers</h3>
+    <div class="staff-list" id="staffList">
+        <!-- Example staff card -->
+        <div class="staff-card">
+            <img src="login-logo.png" alt="Staff Photo">
+            <div>
+                <p>Dr. Sarah Chen</p>
+                <p>Science Department</p>
+            </div>
         </div>
-        <div class="card student-card">
-            <h2>Total Students</h2>
-            <p id="total-students">0</p>
+        <div class="staff-card">
+            <img src="login-logo.png" alt="Staff Photo">
+            <div>
+                <p>Mr. David Lee</p>
+                <p>Math Department</p>
+            </div>
         </div>
-    </section>
+    </div>
+</div>
 
-    <!-- Staff Directory -->
-    <section class="staff-list">
-        <h2>Staff Directory</h2>
-        <ul id="staff-ul">
-            <!-- Staff entries -->
-        </ul>
-    </section>
+<!-- STUDENT LIST -->
+<div class="section">
+    <h3>Students</h3>
+    <div class="student-list" id="studentList">
+        <!-- Example student card -->
+        <div class="student-card">
+            <img src="login-logo.png" alt="Student Photo">
+            <div>
+                <p>Jane Doe</p>
+                <p>Year 10 - 10-A</p>
+            </div>
+        </div>
+        <div class="student-card">
+            <img src="login-logo.png" alt="Student Photo">
+            <div>
+                <p>John Smith</p>
+                <p>Year 11 - 11-B</p>
+            </div>
+        </div>
+    </div>
+</div>
 
-    <!-- Student Directory -->
-    <section class="student-list">
-        <h2>Student Directory</h2>
-        <ul id="student-ul">
-            <!-- Student entries -->
-        </ul>
-    </section>
+<!-- NAVIGATION -->
+<div class="bottom-nav">
+    <a href="#">Dashboard</a>
+    <a href="#">Staff</a>
+    <a href="#">Students</a>
+    <a href="#">Classes</a>
+    <a href="#">Subjects</a>
+    <a href="#">Reports</a>
+</div>
 
-    <!-- Action Buttons -->
-    <section class="actions">
-        <button onclick="location.href='register_teacher.html'">Register Teacher</button>
-        <button onclick="location.href='register_student.html'">Register Student</button>
-        <button onclick="logout()">Logout</button>
-    </section>
-
-</main>
-
-<script src="script.js"></script>
+<script>
+function logout() {
+    alert("Logged out!");
+    window.location.href = "index.html";
+}
+</script>
 </body>
 </html>

@@ -2,19 +2,210 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Student Dashboard</title>
+<title>Student Dashboard - ADUE Portal</title>
 <link rel="stylesheet" href="styles.css">
+<style>
+/* Header styling */
+.header {
+    background-color: #722F37; /* wine color */
+    padding: 20px;
+    text-align: center;
+    color: white;
+}
+.header img {
+    height: 50px;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+.header h1 {
+    display: inline;
+    font-size: 24px;
+    vertical-align: middle;
+}
+
+/* Dashboard wrapper */
+.dashboard-wrapper {
+    max-width: 600px;
+    margin: 30px auto;
+    padding: 20px;
+}
+
+/* Welcome greeting */
+.welcome {
+    font-size: 20px;
+    margin-bottom: 10px;
+}
+
+/* Year/Semester display */
+.year-semester {
+    font-size: 16px;
+    color: #555;
+    margin-bottom: 20px;
+}
+
+/* Academic snapshot */
+.snapshot {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    margin-bottom: 20px;
+}
+.snapshot h2 {
+    color: #722F37;
+    margin-bottom: 10px;
+}
+.snapshot .gpa-ring {
+    font-size: 28px;
+    font-weight: bold;
+    color: #722F37;
+}
+
+/* Subject cards */
+.subject-card {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    margin-bottom: 15px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+}
+.subject-card h3 {
+    color: #722F37;
+    margin-bottom: 8px;
+}
+.subject-card p {
+    margin: 5px 0;
+    color: #333;
+}
+
+/* Upcoming assignments */
+.upcoming {
+    background-color: #fff;
+    padding: 15px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    margin-bottom: 20px;
+}
+.upcoming h3 {
+    color: #722F37;
+    margin-bottom: 10px;
+}
+.upcoming ul {
+    padding-left: 20px;
+}
+.upcoming li {
+    margin-bottom: 6px;
+}
+
+/* Bottom nav */
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background-color: #722F37;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 0;
+    color: white;
+}
+.bottom-nav a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+}
+.bottom-nav a:hover {
+    text-decoration: underline;
+}
+</style>
 </head>
 <body>
 
-<div class="container">
-    <h1>Student Dashboard</h1>
-    <button id="logoutBtn">Logout</button>
-
-    <h2>Your Details</h2>
-    <div id="studentInfo"></div>
+<!-- Header -->
+<div class="header">
+    <img src="logo-new.png" alt="Logo">
+    <h1>ADUE Student Dashboard</h1>
 </div>
 
-<script src="script.js"></script>
+<div class="dashboard-wrapper">
+    <div class="welcome" id="welcomeName">Hello, Student!</div>
+    <div class="year-semester" id="yearSemester">Year: 10 | Semester: 1</div>
+
+    <!-- Academic Snapshot -->
+    <div class="snapshot">
+        <h2>Academic Snapshot</h2>
+        <div class="gpa-ring" id="gpa">GPA: 0.0</div>
+        <div id="attendance">Attendance: 0%</div>
+    </div>
+
+    <!-- Subject Progress -->
+    <div id="subjectList">
+        <!-- Subject cards will be injected here dynamically -->
+    </div>
+
+    <!-- Upcoming Assignments -->
+    <div class="upcoming">
+        <h3>Upcoming Assignments</h3>
+        <ul id="assignmentsList">
+            <!-- Assignments will be injected here dynamically -->
+        </ul>
+    </div>
+</div>
+
+<!-- Bottom Navigation -->
+<div class="bottom-nav">
+    <a href="#">Grades</a>
+    <a href="#">Schedule</a>
+    <a href="#">Resources</a>
+</div>
+
+<script>
+// Fetch logged-in student from localStorage
+let student = JSON.parse(localStorage.getItem('loggedInStudent')) || {
+    name: "Student Name",
+    year: "10",
+    semester: "1",
+    gpa: 0.0,
+    attendance: 0,
+    subjects: [],
+    assignments: []
+};
+
+// Display basic info
+document.getElementById('welcomeName').textContent = `Hello, ${student.name}`;
+document.getElementById('yearSemester').textContent = `Year: ${student.year} | Semester: ${student.semester}`;
+document.getElementById('gpa').textContent = `GPA: ${student.gpa}`;
+document.getElementById('attendance').textContent = `Attendance: ${student.attendance}%`;
+
+// Display subjects
+let subjectList = document.getElementById('subjectList');
+if(student.subjects.length === 0){
+    subjectList.innerHTML = `<p>No subjects assigned yet.</p>`;
+} else {
+    student.subjects.forEach(sub => {
+        let card = document.createElement('div');
+        card.className = "subject-card";
+        card.innerHTML = `<h3>${sub.name}</h3>
+                          <p>Class: ${sub.class}</p>
+                          <p>Latest Score: ${sub.latestScore || 0}</p>
+                          <p>Progress: ${sub.progress || 0}%</p>`;
+        subjectList.appendChild(card);
+    });
+}
+
+// Display assignments
+let assignmentsList = document.getElementById('assignmentsList');
+if(student.assignments.length === 0){
+    assignmentsList.innerHTML = `<li>No upcoming assignments.</li>`;
+} else {
+    student.assignments.forEach(a => {
+        let li = document.createElement('li');
+        li.textContent = `${a.title} - Due: ${a.dueDate}`;
+        assignmentsList.appendChild(li);
+    });
+}
+</script>
+
 </body>
 </html>
